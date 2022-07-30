@@ -1,0 +1,21 @@
+{
+  "name": "stocktwits-relay-bot",
+  "version": "1.0.0",
+  "description": "Bot that relay messages from discord to Twitter and Stocktwits",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "npm run build && node .",
+    "build": "tsc -b tsconfig.json"
+  },
+  "author": "Hiresh Verma",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^17.0.23",
+    "typescript": "^4.6.3"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "discord": "^0.8.2",
+    "discord.js": "^14.1.1"
+  }
+}
