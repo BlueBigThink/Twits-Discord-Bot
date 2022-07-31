@@ -15,7 +15,9 @@
   },
   "dependencies": {
     "axios": "^0.27.2",
-    "discord": "^0.8.2",
-    "discord.js": "^14.1.1"
+    "discord.js-selfbot-v13": "^2.4.6",
+    "form-data": "^4.0.0",
+    "fs": "^0.0.1-security",
+    "puppeteer": "^15.5.0"
   }
 }
