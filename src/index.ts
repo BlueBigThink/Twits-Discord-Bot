@@ -1,7 +1,7 @@
-import { AnyChannel, Client } from "discord.js-selfbot-v13";
-import { readFile, readFileSync, writeFileSync } from "fs";
+import { Client } from "discord.js-selfbot-v13";
+import { readFileSync } from "fs";
 import { commands, loadCommands } from "./commands";
-import { channels, config } from "./types/config";
+import { config } from "./types/config";
 import postStocktwits from "./utils/postStocktwits";
 
 // readFile("./test.png", (f) => console.log(f));
@@ -32,10 +32,8 @@ client.on("messageCreate", async (message) => {
     return;
 
   const args = message.content.trim().replace(Config.prefix, "").split(" ");
-  console.log(args[0]);
   const cmd = commands.get(args[0].toLowerCase());
   if (!cmd) return;
-  console.log("here");
   cmd.exec(client, message, args);
 });
 
