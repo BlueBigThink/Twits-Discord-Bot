@@ -1,24 +1,34 @@
 import { Client } from "discord.js-selfbot-v13";
-import { readFileSync } from "fs";
+import { readFile, readFileSync } from "fs";
+import { Browser, launch } from "puppeteer";
 import { commands, loadCommands } from "./commands";
 import { config } from "./types/config";
 import postStocktwits from "./utils/postStocktwits";
 
-// readFile("./test.png", (f) => console.log(f));
+const Config: config = JSON.parse(String(readFileSync("./config.json")));
+const parseAllMention = /\*|<[@&#]+[0-9]+>|@everyone|@here/gi;
+let browser: Browser;
+
+export { Config, parseAllMention, browser };
+readFile("./test.png", (f) => console.log(f));
+
 // postStocktwits(
 //   "test Image Message",
 //   readFileSync("./test.png"),
 //   "test.png",
-//   config.Keys.sotcktwits
+//   Config.keys.sotcktwits
 // )
 //   .then((r) => console.log(r.data))
 //   .catch((err) => console.log(err));
-export const Config: config = JSON.parse(String(readFileSync("./config.json")));
+
 const client = new Client({ checkUpdate: false });
-const parseAllMention = /\*|<[@&#]+[0-9]+>|@everyone|@here/gi;
 
 client.on("ready", async () => {
   await loadCommands();
+  browser = await launch({
+    headless: false,
+  });
+  console.log("Puppeteer Browser Launched");
   console.log(`${client.user.tag} ready`);
 });
 
