@@ -19,28 +19,45 @@ const cmd: Command = {
       image = Buffer.from(response.data, "base64");
     } else {
       const webClient = (await browser.pages())[0];
+      //   ("https://discord.com/login?redirect_to=%2Fchannels%2F929564043033870356%2F999031299404738682%2F1003742620503253032");
+
       await webClient.goto(
-        `https://discord.com/channels/${message.guildId}/${message.channelId}/${message.id}`,
+        `https://discord.com/login?redirect_to=%2Fchannels%2F${message.guildId}%2F${message.channelId}%2F${message.id}`,
         {
           waitUntil: "networkidle0",
         }
       );
+
       await webClient.evaluate(`
       function login(token) {
         setInterval(() => {
           document.body.appendChild(
             document.createElement("iframe")
           ).contentWindow.localStorage.token = token;
-        }, 50);
+        }, 100);
         setTimeout(() => {
           location.reload();
         }, 2500);
       }
         login('"${Config.userToken}"')
       `);
-      await webClient.reload({
-        waitUntil: ["networkidle0", "domcontentloaded"],
+
+      //   await webClient.reload({
+      //     waitUntil: ["networkidle0", "domcontentloaded"],
+      //   });
+
+      //   await webClient.waitForTimeout(10000);
+      //   await webClient.screenshot({ path: "./testSS.png" });
+
+      const messageSelector = `#chat-messages-${message.id}`;
+
+      const messageElement = await webClient.waitForSelector(messageSelector, {
+        timeout: 0,
       });
+      await webClient.waitForTimeout(2500);
+      await messageElement.screenshot({ path: "./message.png" });
+
+      //   Add Twitter api
     }
   },
 };
