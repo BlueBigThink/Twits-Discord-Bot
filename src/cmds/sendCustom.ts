@@ -1,64 +1,47 @@
 import axios from "axios";
+import { createCanvas } from "canvas";
 import { Client, Message } from "discord.js-selfbot-v13";
-import { readFileSync } from "fs";
+import { readFileSync, writeFileSync } from "fs";
+import Jimp from "jimp";
 import { browser, Config } from "..";
 import { Command } from "../types/commands";
+import discordLogin from "../utils/discordLogin";
+import getMessageImage from "../utils/getMessageImage";
+// import createCanvas from "canvas";
 
 const cmd: Command = {
   id: "sendCustom",
   triggers: ["send", "sendCustom"],
   exec: async function (client: Client, message: Message, args: string[]) {
     if (!Config.usersWhitelist.includes(message.author.id)) return;
+    if (args.length < 2) return message.reply("Message cannot be empty");
+
     let image: Buffer;
-    const { content, attachments } = message;
+    const { attachments } = message;
 
-    if (attachments.size > 0) {
-      const response = await axios(String(attachments.toJSON()[0].attachment), {
-        responseType: "arraybuffer",
-      });
-      image = Buffer.from(response.data, "base64");
-    } else {
-      const webClient = (await browser.pages())[0];
-      //   ("https://discord.com/login?redirect_to=%2Fchannels%2F929564043033870356%2F999031299404738682%2F1003742620503253032");
-
-      await webClient.goto(
-        `https://discord.com/login?redirect_to=%2Fchannels%2F${message.guildId}%2F${message.channelId}%2F${message.id}`,
-        {
-          waitUntil: "networkidle0",
-        }
-      );
-
-      await webClient.evaluate(`
-      function login(token) {
-        setInterval(() => {
-          document.body.appendChild(
-            document.createElement("iframe")
-          ).contentWindow.localStorage.token = token;
-        }, 100);
-        setTimeout(() => {
-          location.reload();
-        }, 2500);
+    switch (true) {
+      case attachments.size > 0: {
+        const response = await axios(
+          String(attachments.toJSON()[0].attachment),
+          {
+            responseType: "arraybuffer",
+          }
+        );
+        image = Buffer.from(response.data, "base64");
+        break;
       }
-        login('"${Config.userToken}"')
-      `);
 
-      //   await webClient.reload({
-      //     waitUntil: ["networkidle0", "domcontentloaded"],
-      //   });
-
-      //   await webClient.waitForTimeout(10000);
-      //   await webClient.screenshot({ path: "./testSS.png" });
-
-      const messageSelector = `#chat-messages-${message.id}`;
-
-      const messageElement = await webClient.waitForSelector(messageSelector, {
-        timeout: 0,
-      });
-      await webClient.waitForTimeout(2500);
-      await messageElement.screenshot({ path: "./message.png" });
-
-      //   Add Twitter api
+      default:
+        const webClient = await discordLogin(
+          browser,
+          Config.userToken,
+          message
+        );
+        image = await getMessageImage(webClient, message);
     }
+
+    writeFileSync("./image.png", image);
+    //   Add Twitter api
   },
 };
 
