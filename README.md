@@ -5,20 +5,13 @@ uses fallguy(alertrelay@thetradehub.net) for user_token
 
 Commands
 
-addch <channelMention> <currency> <delay>optional <totalHashtags>optional
-remch <channelMention>
-.send <message>
-
-p!add_user <@user>
-p!remove_user <@user>
-p!add_ch <#channel> <stocks/crypto> [# of minutes delay - `0` if none] <# of hashtags>
-p!remove_ch <#channel>
-p!stocktwits <message> (TBD: (can upload image as well that will be sent with post))
+`p!addch <channelMention> <currency> <delay>optional <totalHashtags>optional`
+`p!remch <channelMention>`
+`p!send <message>`
 
 
-3 tokens are required
+2 tokens are required
 
-bot_token for Discord bot to see message data and use .stocktwits command to manually post
 user_token is for the Discord account used to login and take a screenshot of the messages being relayed. !USE AN ALT!
 access_token is stocktwits token
 
