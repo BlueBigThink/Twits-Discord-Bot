@@ -23,7 +23,7 @@ const cmd: Command = {
     if (channel.type != "GUILD_TEXT")
       return await message.reply(`Channel must be a Text Channel`);
 
-    if (!/stocks|crypto/gi.exec(args[2]))
+    if (!/stocks|crypto|futures/gi.exec(args[2]))
       return await message.reply(
         `Currency ${args[2]} does not match (stocks/crypto)`
       );

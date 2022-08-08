@@ -9,6 +9,9 @@ export default async function getMessageImage(
 ): Promise<Buffer> {
   const messageSelector = `#chat-messages-${message.id}`;
 
+  await webClient.goto(
+    `https://discord.com/login?redirect_to=%2Fchannels%2F${message.guildId}%2F${message.channelId}%2F${message.id}`
+  );
   const messageElement = await webClient.waitForSelector(messageSelector, {
     timeout: 0,
   }); // Getting message element

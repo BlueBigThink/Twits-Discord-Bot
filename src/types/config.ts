@@ -20,6 +20,11 @@ interface config {
   keys: keys;
   channels: channels;
   usersWhitelist: string[];
+  hashtags: {
+    stocks: string[];
+    crypto: string[];
+    futures: string[];
+  };
 }
 
 export { keys, channels, config };

@@ -1,22 +1,18 @@
 import axios from "axios";
 import FormData from "form-data";
+import { Config } from "..";
 
-export default async function postStocktwits(
-  message: string,
-  image: Buffer,
-  fileName: string,
-  apiKey: string
-) {
+export default async function postStocktwits(message: string, image: Buffer) {
   var bodyFormData = new FormData();
   bodyFormData.append("body", message);
-  bodyFormData.append("chart", image, fileName);
+  bodyFormData.append("chart", image, "image.png");
   return axios(
     "https://api.stocktwits.com/api/2/messages/create.json?cc_to_twitter=0",
     {
       headers: {
         accept: "application/json",
         "accept-language": "en-US,en;q=0.9,hi;q=0.8",
-        authorization: `OAuth ${apiKey}`,
+        authorization: `OAuth ${Config.keys.sotcktwits}`,
         "content-type":
           "multipart/form-data; boundary=----WebKitFormBoundarywRMZCqBlLzyo0oDG",
         "sec-ch-ua":

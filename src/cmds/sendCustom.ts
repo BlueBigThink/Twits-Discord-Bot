@@ -1,13 +1,11 @@
 import axios from "axios";
-import { createCanvas } from "canvas";
 import { Client, Message } from "discord.js-selfbot-v13";
-import { readFileSync, writeFileSync } from "fs";
-import Jimp from "jimp";
-import { browser, Config } from "..";
+import { browser, Config, discord } from "..";
 import { Command } from "../types/commands";
 import discordLogin from "../utils/discordLogin";
 import getMessageImage from "../utils/getMessageImage";
-// import createCanvas from "canvas";
+import postStocktwits from "../utils/postStocktwits";
+import postTwitter from "../utils/postTwitter";
 
 const cmd: Command = {
   id: "sendCustom",
@@ -32,16 +30,12 @@ const cmd: Command = {
       }
 
       default:
-        const webClient = await discordLogin(
-          browser,
-          Config.userToken,
-          message
-        );
-        image = await getMessageImage(webClient, message);
+        image = await getMessageImage(discord, message);
     }
-
-    writeFileSync("./image.png", image);
-    //   Add Twitter api
+    await postStocktwits(message.content, image).catch((err) =>
+      console.log(err)
+    );
+    await postTwitter(message.content, image).catch((err) => console.log(err));
   },
 };
 
