@@ -19,12 +19,14 @@ if using linux, make sure 'executable path' on line 16 is set to your chromedriv
 /usr/lib/chromium-browser/chromedriver
 
 **to get stocktwits access_token**
+
 to get stocktwits auth key paste this in browser console;
+
 or f12 > application > in storage click cookies > stocktwits.com > access_token
 
 OR paste this in browser console
 
-function getCookie(cname) {
+```function getCookie(cname) {
   var name = cname + "=";
   var ca = document.cookie.split(';');
   for(var i = 0; i < ca.length; i++) {
@@ -38,6 +40,6 @@ function getCookie(cname) {
   }
   return "";
 }
-console.log(getCookie("access_token"))
+console.log(getCookie("access_token"))```
 
 ^^ stocktwits access_token
