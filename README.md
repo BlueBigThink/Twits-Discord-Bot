@@ -13,7 +13,7 @@ Commands
 2 tokens are required
 
 user_token is for the Discord account used to login and take a screenshot of the messages being relayed. !USE AN ALT!
-access_token is stocktwits token
+access_token is stocktwits tokenn/n/
 
 if using linux, make sure 'executable path' on line 16 is set to your chromedriver path
 /usr/lib/chromium-browser/chromedriver
