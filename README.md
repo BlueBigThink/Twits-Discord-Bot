@@ -13,12 +13,12 @@ Commands
 2 tokens are required
 
 user_token is for the Discord account used to login and take a screenshot of the messages being relayed. !USE AN ALT!
-access_token is stocktwits tokenn/n/
+access_token is stocktwits token
 
 if using linux, make sure 'executable path' on line 16 is set to your chromedriver path
 /usr/lib/chromium-browser/chromedriver
 
-// to get stocktwits access_token\\
+**to get stocktwits access_token**
 to get stocktwits auth key paste this in browser console;
 or f12 > application > in storage click cookies > stocktwits.com > access_token
 
@@ -40,4 +40,4 @@ function getCookie(cname) {
 }
 console.log(getCookie("access_token"))
 
-// ^^ stocktwits access_token \\
+^^ stocktwits access_token
