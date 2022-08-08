@@ -6,7 +6,9 @@ uses fallguy(alertrelay@thetradehub.net) for user_token
 Commands
 
 `p!addch <channelMention> <currency> <delay>optional <totalHashtags>optional`
+
 `p!remch <channelMention>`
+
 `p!send <message>`
 
 
