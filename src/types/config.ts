@@ -25,6 +25,10 @@ interface config {
     crypto: string[];
     futures: string[];
   };
+  usernames: {
+    twitter: {};
+    stocktwits: {};
+  };
 }
 
 export { keys, channels, config };
