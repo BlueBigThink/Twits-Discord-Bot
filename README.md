@@ -1,4 +1,4 @@
-# TH-relay
+# TH-twits
 Bot that relay messages from discord to Twitter and Stocktwits
 
 uses fallguy(alertrelay@thetradehub.net) for user_token
