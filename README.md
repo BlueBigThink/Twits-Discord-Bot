@@ -5,11 +5,11 @@ uses fallguy(alertrelay@thetradehub.net) for user_token
 
 Commands
 
-`p!addch <channelMention> <currency> <delay>optional <totalHashtags>optional`
+`st!addch <channelMention> <currency> <delay>optional <totalHashtags>optional`
 
-`p!remch <channelMention>`
+`st!remch <channelMention>`
 
-`p!send <message>`
+`st!send <message>`
 
 
 2 tokens are required
