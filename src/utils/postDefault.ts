@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Message } from "discord.js-selfbot-v13";
-import { Config, discord, parseAllMention } from "..";
+import { Config, discord, log, parseAllMention } from "..";
 import { getHashtags } from "./getHashtags";
 import getMessageImage from "./getMessageImage";
 import { parseTickers } from "./parseTickers";
@@ -58,7 +58,12 @@ export default async function postDefault(message: Message) {
   }\n${hashtags}`;
 
   setTimeout(async () => {
-    await postStocktwits(stocktwitsMsg, image).catch((err) => console.log(err));
-    await postTwitter(twitterMsg, image).catch((err) => console.log(err));
+    await postStocktwits(stocktwitsMsg, image)
+      .then(() => log(`\nPosted on stocktwits \n${stocktwitsMsg}`))
+      .catch((err) => log(`\nError while posting on stocktwits\n${err}`));
+
+    await postTwitter(twitterMsg, image)
+      .then(() => log(`\nPosted on twitter \n${twitterMsg}`))
+      .catch((err) => log(`\nError while posting on twitter\n${err}`));
   }, Config.channels[channelId].delay * 60000);
 }

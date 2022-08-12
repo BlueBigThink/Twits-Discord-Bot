@@ -1,5 +1,6 @@
 import { Collection } from "discord.js-selfbot-v13";
 import fs from "fs";
+import { log } from ".";
 import { Command, CommandExecFunction, CommandTrigger } from "./types/commands";
 
 const commands = new Collection<
@@ -8,7 +9,7 @@ const commands = new Collection<
 >();
 
 async function loadCommands() {
-  console.log("Loading commands...");
+  log("Loading commands...");
 
   const dir = fs.readdirSync(__dirname + "/cmds");
   const fileNames = dir.filter((file) => file.endsWith(".js"));
@@ -26,7 +27,7 @@ async function loadCommands() {
     });
   });
 
-  console.log("Commands loaded");
+  log("Commands loaded");
 
   return commands;
 }

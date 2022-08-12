@@ -14,11 +14,18 @@ const parseAllMention = /\*|<[@&#]+[0-9]+>|@everyone|@here/gi;
 
 let browser: Browser;
 let discord: Page;
-export { Config, parseAllMention, browser, discord };
+let timing: number;
+
+function log(txt: string) {
+  console.log(`[${(Date.now() - timing).toLocaleString()}ms] ${txt}`);
+}
+
+export { Config, parseAllMention, browser, discord, log };
 
 const client = new Client({ checkUpdate: false });
 
 client.on("ready", async () => {
+  timing = Date.now();
   await loadCommands();
   puppeteer.use(StealthPlugin());
 
@@ -27,13 +34,14 @@ client.on("ready", async () => {
     ignoreHTTPSErrors: true,
     args: ["--window-size=900,900", "--no-sandbox"],
   });
-  console.log("Puppeteer Browser Launched");
+  log("Puppeteer Browser Launched");
   discord = await discordLogin(browser);
-  console.log("Discord Page Ready");
-  console.log(`${client.user.tag} ready`);
+  log("Discord Page Ready");
+  log(`${client.user.tag} ready`);
 });
 
 client.on("messageCreate", async (message) => {
+  timing = Date.now();
   if (message.content.startsWith(Config.prefix)) {
     const args = message.content.trim().replace(Config.prefix, "").split(" ");
     const cmd = commands.get(args[0].toLowerCase());
