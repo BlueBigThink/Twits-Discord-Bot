@@ -1,0 +1,58 @@
+{
+  "prefix": ".",
+  "userToken": "",
+  "keys": {
+    "sotcktwits": "",
+    "twitter": {
+      "consumerKey": "",
+      "consumerSecret": "",
+      "accessToken": "",
+      "accessTokenSecret": ""
+    }
+  },
+  "channels": {},
+  "usersWhitelist": [],
+  "hashtags": {
+    "stocks": [
+      "#stocks",
+      "#stockmarket",
+      "#daytrading",
+      "#daytrader",
+      "#trader",
+      "#trading",
+      "#nasdaq",
+      "#nyse",
+      "#investor",
+      "#investing",
+      "#optionstrading"
+    ],
+    "crypto": [
+      "#crypto",
+      "#cryptocurrency",
+      "#cryptotrading",
+      "#cryptotrader",
+      "#cryptosignals",
+      "#bitcoin",
+      "#ethereum",
+      "#binance",
+      "#btc",
+      "#eth",
+      "#bnb",
+      "#investor",
+      "#investing "
+    ],
+    "futures": [
+      "#futures",
+      "#investing",
+      "#daytrading",
+      "#futurestrading",
+      "#investor",
+      "#trading",
+      "#trader"
+    ]
+  },
+  "usernames": {
+    "twitter": {},
+    "stocktwits": {}
+  }
+}
