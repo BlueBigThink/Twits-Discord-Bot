@@ -25,7 +25,7 @@ client.on("ready", async () => {
   browser = await puppeteer.launch({
     headless: true,
     ignoreHTTPSErrors: true,
-    args: ["--window-size=900,900"],
+    args: ["--window-size=900,900", "--no-sandbox"],
   });
   console.log("Puppeteer Browser Launched");
   discord = await discordLogin(browser);
