@@ -5,7 +5,6 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { Browser, Page } from "puppeteer";
 import { commands, loadCommands } from "./commands";
 import { config } from "./types/config";
-import postStocktwits from "./utils/postStocktwits";
 import discordLogin from "./utils/discordLogin";
 import postDefault from "./utils/postDefault";
 
@@ -31,8 +30,8 @@ client.on("ready", async () => {
 
   browser = await puppeteer.launch({
     headless: true,
-    ignoreHTTPSErrors: true,
-    args: ["--window-size=900,900", "--no-sandbox"],
+    defaultViewport: { width: 900, height: 900 },
+    args: ["--no-sandbox"],
   });
   log("Puppeteer Browser Launched");
   discord = await discordLogin(browser);
@@ -42,6 +41,7 @@ client.on("ready", async () => {
 
 client.on("messageCreate", async (message) => {
   timing = Date.now();
+  if (!Config.usersWhitelist.includes(message.author.id)) return;
   if (message.content.startsWith(Config.prefix)) {
     const args = message.content.trim().replace(Config.prefix, "").split(" ");
     const cmd = commands.get(args[0].toLowerCase());

@@ -65,5 +65,5 @@ export default async function postDefault(message: Message) {
     await postTwitter(twitterMsg, image)
       .then(() => log(`\nPosted on twitter \n${twitterMsg}`))
       .catch((err) => log(`\nError while posting on twitter\n${err}`));
-  }, Config.channels[channelId].delay * 60000);
+  }, Config.channels[channelId].delay + 0.5 * 60000);
 }

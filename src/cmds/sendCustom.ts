@@ -11,7 +11,6 @@ const cmd: Command = {
   id: "sendCustom",
   triggers: ["send", "sendCustom"],
   exec: async function (client: Client, message: Message, args: string[]) {
-    if (!Config.usersWhitelist.includes(message.author.id)) return;
     if (args.length < 2) return message.reply("Message cannot be empty");
 
     let image: Buffer;

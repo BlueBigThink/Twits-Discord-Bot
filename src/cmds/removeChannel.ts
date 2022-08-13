@@ -7,7 +7,6 @@ const cmd: Command = {
   id: "remCh",
   triggers: ["remch", "rem"],
   exec: async function (client: Client, message: Message, args: string[]) {
-    if (!Config.usersWhitelist.includes(message.author.id)) return;
     if (args.length < 1)
       return await message.reply("You must specify a channel");
     const channel = client.channels.cache.get(args[1].replaceAll(/<#|>+/g, ""));

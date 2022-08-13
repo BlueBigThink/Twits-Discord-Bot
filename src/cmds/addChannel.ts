@@ -7,7 +7,6 @@ const cmd: Command = {
   id: "addCh",
   triggers: ["addch", "add"],
   exec: async function (client: Client, message: Message, args: string[]) {
-    if (!Config.usersWhitelist.includes(message.author.id)) return;
     if (args.length < 2)
       return await message.reply("You must specify a channel and currency");
 
