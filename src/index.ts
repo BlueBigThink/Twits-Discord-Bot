@@ -13,10 +13,9 @@ const parseAllMention = /\*|<[@&#]+[0-9]+>|@everyone|@here/gi;
 
 let browser: Browser;
 let discord: Page;
-let timing: number;
 
 function log(txt: string) {
-  console.log(`[${(Date.now() - timing).toLocaleString()}ms] ${txt}`);
+  console.log(`[${new Date().toLocaleTimeString()}] ${txt}`);
 }
 
 export { Config, parseAllMention, browser, discord, log };
@@ -24,7 +23,6 @@ export { Config, parseAllMention, browser, discord, log };
 const client = new Client({ checkUpdate: false });
 
 client.on("ready", async () => {
-  timing = Date.now();
   await loadCommands();
   puppeteer.use(StealthPlugin());
 
@@ -40,7 +38,6 @@ client.on("ready", async () => {
 });
 
 client.on("messageCreate", async (message) => {
-  timing = Date.now();
   if (!Config.usersWhitelist.includes(message.author.id)) return;
   if (message.content.startsWith(Config.prefix)) {
     const args = message.content.trim().replace(Config.prefix, "").split(" ");

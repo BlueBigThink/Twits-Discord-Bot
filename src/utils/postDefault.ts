@@ -9,12 +9,15 @@ import postTwitter from "./postTwitter";
 
 export default async function postDefault(message: Message) {
   const { author, attachments, channelId, embeds } = message;
-  if (!Config.channels[channelId]) return;
+  const configChannel = Config.channels[channelId];
+  if (!configChannel) return;
 
   let image: Buffer;
-  let tweet: string;
+  let tweet = "";
   let args = [];
-  let hashtags: string;
+  let hashtags = "";
+
+  log("Processing Message");
 
   if (attachments.size) {
     const response = await axios(String(attachments.toJSON()[0].attachment), {
@@ -26,45 +29,39 @@ export default async function postDefault(message: Message) {
   }
 
   if (embeds.length) {
-    const embed = embeds[0];
-
+    const { fields, title, description } = embeds[0];
     let field = "";
-
-    for (var i in embed.fields) {
-      field = `${field}\n${embed.fields[i].name}\n${embed.fields[i].value}`;
+    for (var i in fields) {
+      field = `${field}\n${fields[i].name}\n${fields[i].value}`;
     }
-    args = `${embed.title}\n${embed.description}${field}`.split(/(\s+)/);
+    args = `${title}\n${description}${field}`.split(/(\s+)/);
   } else {
     args = message.content.split(/(\s+)/);
   }
 
-  const currency = Config.channels[channelId].currency;
-
-  args = parseTickers(currency, args);
-  hashtags = getHashtags(currency, message);
-
+  args = parseTickers(configChannel.currency, args);
+  hashtags = getHashtags(configChannel.currency, message);
   tweet = args.toString().replaceAll(",", "").replaceAll(parseAllMention, "");
 
   if (tweet.length > 220) tweet = tweet.substring(0, 218) + "..";
 
   const stocktwitsUsername = Config.usernames.stocktwits[author.id];
-  const twitterUsername = Config.usernames.twitter[author.id];
-
   const stocktwitsMsg = `${tweet}${
     stocktwitsUsername ? `\nPosted by @${stocktwitsUsername}` : ""
   }\n${hashtags}`;
 
+  const twitterUsername = Config.usernames.twitter[author.id];
   const twitterMsg = `${tweet}${
     twitterUsername ? `\nPosted by @${twitterUsername}` : ""
   }\n${hashtags}`;
 
   setTimeout(async () => {
     await postStocktwits(stocktwitsMsg, image)
-      .then(() => log(`\nPosted on stocktwits \n${stocktwitsMsg}`))
-      .catch((err) => log(`\nError while posting on stocktwits\n${err}`));
+      .then(() => log(`Posted on stocktwits \n${stocktwitsMsg}\n`))
+      .catch((err) => log(`Error while posting on stocktwits\n${err}\n`));
 
     await postTwitter(twitterMsg, image)
-      .then(() => log(`\nPosted on twitter \n${twitterMsg}`))
-      .catch((err) => log(`\nError while posting on twitter\n${err}`));
-  }, Config.channels[channelId].delay + 0.5 * 60000);
+      .then(() => log(`Posted on twitter \n${twitterMsg}\n`))
+      .catch((err) => log(`Error while posting on twitter\n${err}\n`));
+  }, configChannel.delay + 0.5 * 60000);
 }
