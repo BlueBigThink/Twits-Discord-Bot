@@ -27,7 +27,8 @@ export default async function postDefault(message: Message) {
 
   if (embeds.length) {
     const embed = embeds[0];
-    let field: string;
+
+    let field = "";
 
     for (var i in embed.fields) {
       field = `${field}\n${embed.fields[i].name}\n${embed.fields[i].value}`;

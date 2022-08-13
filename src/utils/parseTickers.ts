@@ -5,7 +5,7 @@ export function parseTickers(currency: string, args: string[]) {
     String(readFileSync(`./tickers/${currency}.json`))
   );
   for (var i in args) {
-    if (tickers.includes(args[i].toUpperCase())) {
+    if (tickers.includes(args[i])) {
       args.splice(
         Number(i),
         1,
