@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Message } from "discord.js-selfbot-v13";
-import { Config, discord, log, parseAllMention } from "..";
+import { Config, discord, log, parseEmoji, parseMentions } from "..";
 import { getHashtags } from "./getHashtags";
 import getMessageImage from "./getMessageImage";
 import { parseTickers } from "./parseTickers";
@@ -34,21 +34,27 @@ export default async function postDefault(message: Message) {
     for (var i in fields) {
       field = `${field}\n${fields[i].name}\n${fields[i].value}`;
     }
-    args = `${title}\n${description}${field}`.split(/(\s+)/);
+    args = `${title ? title : ""}\n${
+      description ? description : ""
+    }${field}`.split(/(\s+)/);
   } else {
     args = message.content.split(/(\s+)/);
   }
 
   args = parseTickers(configChannel.currency, args);
   hashtags = getHashtags(configChannel.currency, message);
-  tweet = args.toString().replaceAll(",", "").replaceAll(parseAllMention, "");
+  tweet = args
+    .toString()
+    .replaceAll(",", "")
+    .replaceAll(parseMentions, "")
+    .replaceAll(parseEmoji, "");
 
   if (tweet.length > 220) tweet = tweet.substring(0, 218) + "..";
 
   const stocktwitsUsername = Config.usernames.stocktwits[author.id];
   const stocktwitsMsg = `${tweet}${
     stocktwitsUsername ? `\nPosted by @${stocktwitsUsername}` : ""
-  }\n${hashtags}`;
+  }`;
 
   const twitterUsername = Config.usernames.twitter[author.id];
   const twitterMsg = `${tweet}${

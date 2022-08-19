@@ -9,8 +9,8 @@ import discordLogin from "./utils/discordLogin";
 import postDefault from "./utils/postDefault";
 
 const Config: config = JSON.parse(String(readFileSync("./config.json")));
-const parseAllMention = /\*|<[@&#]+[0-9]+>|@everyone|@here/gi;
-
+const parseMentions = /\*|<[@&#]+[0-9]+>|@everyone|@here/gim;
+const parseEmoji = /:[a-z]+:/gim;
 let browser: Browser;
 let discord: Page;
 
@@ -18,7 +18,7 @@ function log(txt: string) {
   console.log(`[${new Date().toLocaleTimeString()}] ${txt}`);
 }
 
-export { Config, parseAllMention, browser, discord, log };
+export { Config, parseMentions, parseEmoji, browser, discord, log };
 
 const client = new Client({ checkUpdate: false });
 
