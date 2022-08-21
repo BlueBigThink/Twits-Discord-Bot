@@ -45,3 +45,5 @@ OR paste this in browser console
 console.log(getCookie("access_token"))```
 
 ^^ stocktwits access_token
+#
+© [Trade Hub](https://thetradehub.net)
