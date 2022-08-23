@@ -10,7 +10,7 @@ import postDefault from "./utils/postDefault";
 
 const Config: config = JSON.parse(String(readFileSync("./config.json")));
 const parseMentions = /\*|<[@&#]+[0-9]+>|@everyone|@here/gim;
-const parseEmoji = /:[a-z]+:/gim;
+const parseEmoji = /:[a-z_]+:/gim;
 let browser: Browser;
 let discord: Page;
 
