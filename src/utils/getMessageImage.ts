@@ -16,7 +16,7 @@ export default async function getMessageImage(
     timeout: 0,
   }); // Getting message element
 
-  await webClient.waitForTimeout(2000);
+  await webClient.waitForTimeout(4000);
 
   const messageScreenshot = await messageElement.screenshot(); // Taking Screenshot
   const messageImage = await Jimp.read(Buffer.from(messageScreenshot)); // Reading Screenshot
