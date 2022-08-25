@@ -27,6 +27,7 @@ export default async function postDefault(message: Message) {
   } else {
     image = await getMessageImage(discord, message);
   }
+  if (!image) return log("Error: Could not take Screenshot");
 
   if (embeds.length) {
     const { fields, title, description } = embeds[0];
@@ -63,11 +64,11 @@ export default async function postDefault(message: Message) {
 
   setTimeout(async () => {
     await postStocktwits(stocktwitsMsg, image)
-      .then(() => log(`Posted on stocktwits \n${stocktwitsMsg}\n`))
-      .catch((err) => log(`Error while posting on stocktwits\n${err}\n`));
+      .then(() => log(`Posted on stocktwits \n${stocktwitsMsg}`))
+      .catch((err) => log(`Error while posting on stocktwits\n${err}`));
 
     await postTwitter(twitterMsg, image)
-      .then(() => log(`Posted on twitter \n${twitterMsg}\n`))
-      .catch((err) => log(`Error while posting on twitter\n${err}\n`));
+      .then(() => log(`Posted on twitter \n${twitterMsg}`))
+      .catch((err) => log(`Error while posting on twitter\n${err}`));
   }, configChannel.delay + 0.5 * 60000);
 }

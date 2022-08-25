@@ -26,6 +26,8 @@ const cmd: Command = {
       image = await getMessageImage(discord, message);
     }
 
+    if (!image) return log("Error: Could not take Screenshot");
+
     await postStocktwits(content, image)
       .then(() => log(`Posted custom message on stocktwits \n${content}\n`))
       .catch((err) =>
