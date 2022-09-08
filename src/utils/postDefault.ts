@@ -52,15 +52,19 @@ export default async function postDefault(message: Message) {
 
   if (tweet.length > 220) tweet = tweet.substring(0, 218) + "..";
 
+  const delay = configChannel.delay;
+
   const stocktwitsUsername = Config.usernames.stocktwits[author.id];
+
   const stocktwitsMsg = `${tweet}${
     stocktwitsUsername ? `\nPosted by @${stocktwitsUsername}` : ""
-  }`;
+  }${delay ? `\nDelay: ${delay} min` : ""}`;
 
   const twitterUsername = Config.usernames.twitter[author.id];
+
   const twitterMsg = `${tweet}${
     twitterUsername ? `\nPosted by @${twitterUsername}` : ""
-  }\n${hashtags}`;
+  }${delay ? `\nDelay: ${delay} min` : ""}\n${hashtags}`;
 
   setTimeout(async () => {
     await postStocktwits(stocktwitsMsg, image)
