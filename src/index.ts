@@ -9,7 +9,7 @@ import discordLogin from "./utils/discordLogin";
 import postDefault from "./utils/postDefault";
 
 const Config: config = JSON.parse(String(readFileSync("./config.json")));
-const parseMentions = /\*|<([@&#]|:?[a-z]+:?)?+[a-z0-9]+>|@everyone|@here/gm;
+const parseMentions = /\*|<[@&#a-z]+[0-9]+>|@everyone|@here/gim;
 const parseEmoji = /:[a-z_]+:/gim;
 let browser: Browser;
 let discord: Page;
