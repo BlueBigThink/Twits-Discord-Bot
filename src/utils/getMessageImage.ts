@@ -1,6 +1,5 @@
 import { createCanvas, loadImage } from "canvas";
 import { Message } from "discord.js-selfbot-v13";
-import Jimp from "jimp";
 import { Page } from "puppeteer";
 import { log } from "..";
 
@@ -35,22 +34,14 @@ export default async function getMessageImage(
   }
   if (!messageScreenshot) return null;
 
-  const messageImage = await Jimp.read(Buffer.from(messageScreenshot)); // Reading Screenshot
+  const img = await loadImage(Buffer.from(messageScreenshot)); // Reading Screenshot
 
-  const w = messageImage.getWidth(),
-    h = messageImage.getHeight();
-  const canvas = createCanvas(w, h * 2); // Creating Canvas
+  const canvas = createCanvas(img.width, img.height * 2),
+    ctx = canvas.getContext("2d"); // Creating context
 
-  const context = canvas.getContext("2d"); // Creating context
-
-  context.fillStyle = "#13121d"; // Filling Style
-  context.fillRect(0, 0, canvas.width, canvas.height); // Filling Rect
-
-  context.drawImage(
-    await loadImage(await messageImage.getBufferAsync(Jimp.MIME_PNG)),
-    0,
-    h
-  );
+  ctx.fillStyle = "#13121d";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, img.height / 2);
 
   return canvas.toBuffer("image/png"); // Creating Buffer
 }
