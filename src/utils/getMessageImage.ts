@@ -24,7 +24,7 @@ export default async function getMessageImage(
       await messageElement.evaluate((e) => e.scrollIntoView());
       await webClient.waitForTimeout(2000);
       await messageElement.evaluate((e) => e.scrollIntoView());
-      await webClient.waitForTimeout(2000);
+      await webClient.waitForTimeout(6000);
       messageScreenshot = await messageElement.screenshot(); // Taking Screenshot
       log("Screenshot Taken Successfully");
       break;
