@@ -1,4 +1,4 @@
-import { createCanvas } from "canvas";
+import { createCanvas, loadImage } from "canvas";
 import { Message } from "discord.js-selfbot-v13";
 import Jimp from "jimp";
 import { Page } from "puppeteer";
@@ -43,7 +43,7 @@ export default async function getMessageImage(
   context.fillRect(0, 0, canvas.width, canvas.height); // Filling Rect
 
   context.drawImage(
-    await messageImage.getBufferAsync(Jimp.MIME_PNG),
+    await loadImage(await messageImage.getBufferAsync(Jimp.MIME_PNG)),
     w / 2,
     h / 2
   );
