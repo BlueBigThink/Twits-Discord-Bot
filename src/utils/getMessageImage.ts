@@ -33,26 +33,20 @@ export default async function getMessageImage(
 
   const messageImage = await Jimp.read(Buffer.from(messageScreenshot)); // Reading Screenshot
 
-  const width = messageImage.getWidth() + 150; // Setting Width and Height
-  const height = messageImage.getHeight() + 150;
-
-  const canvas = createCanvas(width, height); // Creating Canvas
+  const w = messageImage.getWidth(),
+    h = messageImage.getHeight();
+  const canvas = createCanvas(w * 2, h * 2); // Creating Canvas
 
   const context = canvas.getContext("2d"); // Creating context
 
   context.fillStyle = "#13121d"; // Filling Style
-  context.fillRect(0, 0, width, height); // Filling Rect
+  context.fillRect(0, 0, canvas.width, canvas.height); // Filling Rect
 
-  const canvasBuffer = canvas.toBuffer("image/png"); // Crrating Buffer
-  const canvasBackground = await Jimp.read(canvasBuffer); // Reading Buffer
+  context.drawImage(
+    await messageImage.getBufferAsync(Jimp.MIME_PNG),
+    w / 2,
+    h / 2
+  );
 
-  const centerWidth =
-    canvasBackground.getWidth() / 2 - messageImage.getWidth() / 2; // Setting Center Width
-
-  const centerheight =
-    canvasBackground.getHeight() / 2 - messageImage.getHeight() / 2; // Setting Center Height
-
-  canvasBackground.blit(messageImage, centerWidth, centerheight); // Putting Message Image on background
-
-  return canvasBackground.getBufferAsync(Jimp.MIME_PNG);
+  return canvas.toBuffer("image/png"); // Creating Buffer
 }
