@@ -34,14 +34,14 @@ export default async function getMessageImage(
   }
   if (!messageScreenshot) return null;
 
-  const img = await loadImage(Buffer.from(messageScreenshot)); // Reading Screenshot
+  const img = await loadImage(Buffer.from(messageScreenshot));
 
   const canvas = createCanvas(img.width, img.height * 2),
-    ctx = canvas.getContext("2d"); // Creating context
+    ctx = canvas.getContext("2d");
 
   ctx.fillStyle = "#13121d";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(img, 0, img.height / 2);
 
-  return canvas.toBuffer("image/png"); // Creating Buffer
+  return canvas.toBuffer();
 }
