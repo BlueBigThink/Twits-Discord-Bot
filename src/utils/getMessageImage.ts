@@ -39,7 +39,7 @@ export default async function getMessageImage(
 
   const w = messageImage.getWidth(),
     h = messageImage.getHeight();
-  const canvas = createCanvas(w, h * 1.5); // Creating Canvas
+  const canvas = createCanvas(w, h * 2); // Creating Canvas
 
   const context = canvas.getContext("2d"); // Creating context
 
@@ -49,7 +49,7 @@ export default async function getMessageImage(
   context.drawImage(
     await loadImage(await messageImage.getBufferAsync(Jimp.MIME_PNG)),
     0,
-    canvas.height / 2 - h / 2
+    h
   );
 
   return canvas.toBuffer("image/png"); // Creating Buffer
