@@ -28,7 +28,7 @@ client.on("ready", async () => {
 
   browser = await puppeteer.launch({
     headless: true,
-    defaultViewport: { width: 2600, height: 2600 },
+    defaultViewport: { width: 900, height: 1500 },
     args: ["--no-sandbox"],
   });
   log("Puppeteer Browser Launched");
