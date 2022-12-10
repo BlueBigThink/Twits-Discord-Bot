@@ -28,8 +28,8 @@ client.on("ready", async () => {
 
   browser = await puppeteer.launch({
     headless: true,
-    defaultViewport: { width: 900, height: 1500 },
-    args: ["--no-sandbox"],
+    defaultViewport: { width: 1920, height: 1080 },
+    args: ["--no-sandbox", "--window-size=1920,1080"],
   });
   log("Puppeteer Browser Launched");
   discord = await discordLogin(browser);
