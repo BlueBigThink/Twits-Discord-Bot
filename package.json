@@ -1,25 +1,44 @@
 {
-  "name": "stocktwits-relay-bot",
+  "name": "twits",
   "version": "1.0.0",
-  "description": "Bot that relay messages from discord to Twitter and Stocktwits",
-  "main": "dist/index.js",
+  "main": "index.js",
+  "repository": "https://github.com/thetradehub/twits",
+  "author": "Light Yagami <its_lightyagami@icloud.com>",
+  "license": "UNLICENSED",
   "scripts": {
-    "start": "npm run build && node .",
-    "build": "tsc -b tsconfig.json"
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "start:dev": "nodemon",
+    "deploy-commands": "tsc && node dist/scripts/deploy-commands.js",
+    "deploy-commands:dev": "tsc && node dist/scripts/deploy-commands.js dev"
   },
-  "author": "Hiresh Verma",
-  "license": "ISC",
   "dependencies": {
-    "@types/node": "^17.0.23",
-    "axios": "^0.27.2",
-    "canvas": "^2.9.3",
-    "discord.js-selfbot-v13": "^2.4.6",
-    "form-data": "^4.0.0",
-    "fs": "^0.0.1-security",
-    "puppeteer": "^15.5.0",
-    "puppeteer-extra": "^3.3.4",
-    "puppeteer-extra-plugin-stealth": "^2.11.0",
-    "twitter-api-client": "^1.6.0",
-    "typescript": "^4.9.3"
+    "@sentry/node": "^7.28.0",
+    "axios": "^1.2.1",
+    "discord.js": "^14.7.1",
+    "dotenv": "^16.0.3",
+    "lodash": "^4.17.21",
+    "module-alias": "^2.2.2"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.191",
+    "@types/module-alias": "^2.0.1",
+    "@types/node": "^18.11.17",
+    "@typescript-eslint/parser": "^5.47.0",
+    "eslint": "^8.30.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-import-resolver-typescript": "^3.5.2",
+    "eslint-plugin-import": "^2.26.0",
+    "nodemon": "^2.0.20",
+    "typescript": "^4.9.4"
+  },
+  "_moduleAliases": {
+    "@keys": "dist/keys/index",
+    "@assets": "dist/assets",
+    "@services": "dist/services",
+    "@utils": "dist/utils/index"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }

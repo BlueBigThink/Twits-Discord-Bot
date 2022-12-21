@@ -1,52 +1,86 @@
-import { Client } from "discord.js-selfbot-v13";
-import { readFileSync } from "fs";
-import puppeteer from "puppeteer-extra";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import { Browser, Page } from "puppeteer";
-import { commands, loadCommands } from "./commands";
-import { config } from "./types/config";
-import discordLogin from "./utils/discordLogin";
-import postDefault from "./utils/postDefault";
+// IMPORTS
+import { readdirSync } from 'fs';
+import 'module-alias/register';
+import { join } from 'path';
+import { Client, ActivityType, Collection } from 'discord.js';
+import { discordToken } from '@keys';
+import { handleError } from '@utils';
 
-const Config: config = JSON.parse(String(readFileSync("./config.json")));
-const parseMentions = /\*|<[@&#a-z]+[0-9]+>|@everyone|@here/gim;
-const parseEmoji = /:[a-z_]+:/gim;
-let browser: Browser;
-let discord: Page;
+// CLIENT
+// -> Read command folders
+const commandFolders = readdirSync(join(__dirname, 'commands'));
 
-function log(txt: string) {
-  console.log(`[${new Date().toLocaleTimeString()}] ${txt}`);
-}
+// -> Read event folders
+const eventFiles = readdirSync(join(__dirname, 'events')).filter((file) =>
+  file.endsWith('.js'),
+);
 
-export { Config, parseMentions, parseEmoji, browser, discord, log };
-
-const client = new Client({ checkUpdate: false });
-
-client.on("ready", async () => {
-  await loadCommands();
-  puppeteer.use(StealthPlugin());
-
-  browser = await puppeteer.launch({
-    headless: true,
-    defaultViewport: { width: 1920, height: 1080 },
-    args: ["--no-sandbox", "--window-size=1920,1080"],
-  });
-  log("Puppeteer Browser Launched");
-  discord = await discordLogin(browser);
-  log("Discord Page Ready");
-  log(`${client.user.tag} ready`);
+// -> Create client
+const client = new Client({
+  presence: {
+    activities: [
+      {
+        name: 'over messages',
+        type: ActivityType.Watching,
+      },
+    ],
+  },
+  intents: ['MessageContent', 'GuildMessages'],
 });
 
-client.on("messageCreate", async (message) => {
-  if (!Config.usersWhitelist.includes(message.author.id)) return;
-  if (message.content.startsWith(Config.prefix)) {
-    const args = message.content.trim().replace(Config.prefix, "").split(" ");
-    const cmd = commands.get(args[0].toLowerCase());
-    if (!cmd) return;
-    cmd.exec(client, message, args);
+// -> Create commands collection
+const commandsCollection: Collection<string, any> = new Collection();
+
+// -> Read command files
+for (const folder of commandFolders) {
+  const commandFiles = readdirSync(
+    join(__dirname, 'commands', folder),
+  ).filter((file) => file.endsWith('.js'));
+
+  const autocompleteFiles = readdirSync(
+    join(__dirname, 'commands', folder),
+  ).filter((file) => file.endsWith('.js'));
+
+  for (const file of commandFiles) {
+    const command = require(join(__dirname, 'commands', folder, file));
+    commandsCollection.set(command.data.name, command);
+  }
+}
+
+// MAIN
+// -> Handle Events
+for (const file of eventFiles) {
+  const event = require(`./events/${file}`);
+  if (event.once) {
+    client.once(event.name, (...args) => event.execute(...args));
   } else {
-    await postDefault(message);
+    client.on(event.name, (...args) => event.execute(...args));
+  }
+}
+
+// -> Handle Commands
+client.on('interactionCreate', async (interaction) => {
+  if (!interaction.isChatInputCommand()) return;
+
+  const { commandName } = interaction;
+
+  if (!commandsCollection.has(commandName)) return;
+
+  try {
+    await commandsCollection.get(commandName).execute(interaction);
+  } catch (e) {
+    handleError(e);
+    await interaction.reply({
+      content: "Oops! Command couldn't be executed for unknown reasons",
+      ephemeral: true,
+    });
   }
 });
 
-client.login(Config.userToken);
+// LOGIN
+try {
+  client.login(discordToken);
+  console.log('Bot Status: Online');
+} catch (e) {
+  handleError(e);
+}

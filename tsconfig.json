@@ -1,12 +1,25 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "es6",
     "module": "CommonJS",
-    "rootDir": "src",
-    "outDir": "dist",
+    "outDir": "./dist/",
+    "rootDir": "./src/",
+    "downlevelIteration": true,
+    "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "declaration": true
+    "typeRoots": ["@types", "./node_modules/@types"],
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node"],
+    "baseUrl": "src",
+    "paths": {
+      "@keys": ["keys/index"],
+      "@assets/*": ["assets/*"],
+      "@services/*": ["services/*"],
+      "@utils": ["utils/index"]
+    },
+    "noImplicitAny": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true
   },
-  "include": ["src"]
+  "exclude": ["node_modules"]
 }
