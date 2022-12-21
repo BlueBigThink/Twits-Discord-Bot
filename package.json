@@ -1,7 +1,7 @@
 {
   "name": "twits",
   "version": "1.0.0",
-  "main": "index.js",
+  "exports": "./index.js",
   "repository": "https://github.com/thetradehub/twits",
   "author": "Light Yagami <its_lightyagami@icloud.com>",
   "license": "UNLICENSED",
