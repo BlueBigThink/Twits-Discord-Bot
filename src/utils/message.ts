@@ -1,8 +1,8 @@
 // IMPORTS
-import coins from '@assets/tickers/coins.json';
-import crypto from '@assets/tickers/crypto.json';
-import futures from '@assets/tickers/futures.json';
-import stocks from '@assets/tickers/stocks.json';
+import coins from '@assets/json/coins.json';
+import crypto from '@assets/json/crypto.json';
+import futures from '@assets/json/futures.json';
+import stocks from '@assets/json/stocks.json';
 import { createCanvas, loadImage, registerFont } from 'canvas';
 import { Attachment } from 'discord.js';
 

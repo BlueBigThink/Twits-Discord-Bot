@@ -7,6 +7,8 @@ import {
 } from '@keys';
 import { handleError } from '@utils';
 import { TwitterClient } from 'twitter-api-client';
+import { crypto, futures, stocks } from '@assets/json/hashtags.json';
+import { sampleSize } from 'lodash';
 
 // INIT
 const twitterClient = new TwitterClient({
@@ -17,6 +19,12 @@ const twitterClient = new TwitterClient({
 });
 
 // TWITTER UTILS
+/**
+ * Post a message to twitter
+ *
+ * @param content - Message content to post
+ * @param image - Image to post
+ */
 export const postToTwitter = async (content: string, image: Buffer) => {
   try {
     const uploaded = await twitterClient.media.mediaUpload({
@@ -32,4 +40,22 @@ export const postToTwitter = async (content: string, image: Buffer) => {
     handleError(e);
     return e;
   }
+};
+
+/**
+ * Get random hashtags for given category
+ *
+ * @param category - Category of the hashtags
+ * @param count - Number of hashtags to return
+ */
+export const getHashTags = (category: string, count: number) => {
+  const hashtags =
+    category === 'stocks'
+      ? stocks
+      : category === 'futures'
+      ? futures
+      : crypto;
+  const randomHashtags = sampleSize(hashtags, count);
+
+  return randomHashtags.join(' ');
 };
