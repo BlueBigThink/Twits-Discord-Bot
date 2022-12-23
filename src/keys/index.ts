@@ -17,3 +17,9 @@ export const discordGuildId = isProd
 export const sentryDsn = isProd
   ? process.env.SENTRY_DSN!
   : process.env.SENTRY_DSN_DEV!;
+export const stocktwitsApiKey = isProd
+  ? process.env.STOCKTWITS_API_KEY!
+  : process.env.STOCKTWITS_API_KEY_DEV!;
+export const twitterBearerToken = isProd
+  ? process.env.TWITTER_BEARER_TOKEN!
+  : process.env.TWITTER_BEARER_TOKEN_DEV!;

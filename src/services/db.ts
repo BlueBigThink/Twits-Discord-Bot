@@ -1,5 +1,6 @@
 // Imports
 import { isProd } from '@keys';
+import { handleError } from '@utils';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -59,7 +60,7 @@ export default class Database {
 
     await fs
       .writeFile(dbPath, JSON.stringify(parsedDb, null, 2), 'utf-8')
-      .catch((err) => console.log(err));
+      .catch((err) => handleError(err));
   }
 
   /**
@@ -79,7 +80,7 @@ export default class Database {
 
     await fs
       .writeFile(dbPath, JSON.stringify(parsedDb, null, 2), 'utf-8')
-      .catch((err) => console.log(err));
+      .catch((err) => handleError(err));
   }
 
   /**
@@ -94,7 +95,7 @@ export default class Database {
 
     await fs
       .writeFile(dbPath, JSON.stringify(parsedDb, null, 2), 'utf-8')
-      .catch((err) => console.log(err));
+      .catch((err) => handleError(err));
   }
 
   /**
@@ -103,6 +104,6 @@ export default class Database {
   static async init(): Promise<void> {
     await fs
       .writeFile(dbPath, JSON.stringify({}, null, 2), 'utf-8')
-      .catch((err) => console.log(err));
+      .catch((err) => handleError(err));
   }
 }
