@@ -27,6 +27,10 @@ module.exports = {
       option.setName('image').setDescription('Image to send'),
     ),
   async execute(interaction: ChatInputCommandInteraction) {
+    await interaction.deferReply({
+      ephemeral: true,
+    });
+
     // -> Options
     const message = interaction.options.getString('message', true);
     const image = interaction.options.getAttachment('image');
@@ -52,13 +56,12 @@ module.exports = {
     await postToTwitter(formattedMessage, imageToPost);
 
     // -> Post to st
-    await postToStockTwits(formattedMessage, imageToPost);
+    // await postToStockTwits(formattedMessage, imageToPost);
 
     // -> Send message
-    await interaction.reply({
+    await interaction.editReply({
       content: `**Posted to Twitter & StockTwits:** ${formattedMessage}`,
       files: image ? [image] : [attachment],
-      ephemeral: true,
     });
   },
 };
