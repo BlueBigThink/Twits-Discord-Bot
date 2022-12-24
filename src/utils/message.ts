@@ -39,8 +39,8 @@ export const generateMessageImage = async (
 ) => {
   // -> Create canvas with dynamic width/height based on content
   const canvas = createCanvas(
-    800,
-    Math.max(64, 64 + Math.ceil(content.length / 100) * 16),
+    400,
+    Math.max(200, 64 + Math.ceil(content.length / 100) * 16),
   );
   const context = canvas.getContext('2d');
 
