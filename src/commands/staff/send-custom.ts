@@ -1,6 +1,12 @@
 // IMPORTS
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { formatMessageContentToTweet, generateMessageImage } from '@utils';
+import {
+  discordAttachmentToBuffer,
+  formatMessageContentToTweet,
+  generateMessageImage,
+  postToStockTwits,
+  postToTwitter,
+} from '@utils';
 import {
   AttachmentBuilder,
   ChatInputCommandInteraction,
@@ -38,9 +44,19 @@ module.exports = {
 
     const attachment = new AttachmentBuilder(generatedImage);
 
+    const imageToPost = image
+      ? await discordAttachmentToBuffer(image)
+      : generatedImage;
+
+    // -> Post to twitter
+    await postToTwitter(formattedMessage, imageToPost);
+
+    // -> Post to st
+    await postToStockTwits(formattedMessage, imageToPost);
+
     // -> Send message
     await interaction.reply({
-      content: formattedMessage,
+      content: `**Posted to Twitter & StockTwits:** ${formattedMessage}`,
       files: image ? [image] : [attachment],
       ephemeral: true,
     });
