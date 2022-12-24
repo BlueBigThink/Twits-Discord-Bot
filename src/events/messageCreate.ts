@@ -2,10 +2,13 @@
 import Channels from '@services/channels';
 import Users from '@services/users';
 import {
+  discordAttachmentToBuffer,
   formatMessageContentToTweet,
   generateMessageImage,
   getHashTags,
   handleError,
+  postToStockTwits,
+  postToTwitter,
 } from '@utils';
 import { Attachment, AttachmentBuilder, Message } from 'discord.js';
 
@@ -17,19 +20,14 @@ module.exports = {
     if (message.author.bot) return;
 
     // -> Ignore if user is not whitelisted
-    const users = await Users.getAll();
+    const isUserWhitelisted = await Users.isWhitelisted(message.author.id);
 
-    if (!users.find((user) => user.id === message.author.id)) return;
+    if (!isUserWhitelisted) return;
 
     // -> Ignore if message is not in one of the channels
-    const channels = Channels.getAll();
+    const isChannelTracked = await Channels.isTracked(message.channel.id);
 
-    if (
-      !(await channels).find(
-        (channel) => channel.id === message.channel.id,
-      )
-    )
-      return;
+    if (!isChannelTracked) return;
 
     // -> Format message
     const formattedMessage = formatMessageContentToTweet(message.content);
@@ -61,5 +59,41 @@ module.exports = {
       channelConfig.category,
       channelConfig.hashtagCount,
     );
+
+    let tweet = formattedMessage;
+
+    // -> Handle Image
+    const imageToPost = await discordAttachmentToBuffer(image);
+
+    // -> Truncate tweet if it's too long
+    if (tweet.length > 220) tweet = `${tweet.substring(0, 217)}...`;
+
+    const user = await Users.getOneById(message.author.id);
+    const channel = await Channels.getOneById(message.channel.id);
+
+    const stocktwitsMsg = `${tweet}${
+      user.twitstockUsername
+        ? `\nPosted by @${user.twitstockUsername}`
+        : ''
+    }${channel.delay ? `\nDelay: ${channel.delay} min` : ''}`;
+
+    const twitterMsg = `${tweet}${
+      user.twitterUsername ? `\nPosted by @${user.twitterUsername}` : ''
+    }${channel.delay ? `\nDelay: ${channel.delay} min` : ''}\n${hashtags}`;
+
+    // -> Send to Twitter & Stocktwits
+    setTimeout(async () => {
+      await postToStockTwits(stocktwitsMsg, imageToPost)
+        .then(() => console.log(`Posted on stocktwits \n${stocktwitsMsg}`))
+        .catch((err) =>
+          handleError(`Error while posting on stocktwits\n${err}`),
+        );
+
+      await postToTwitter(twitterMsg, imageToPost)
+        .then(() => console.log(`Posted on twitter \n${twitterMsg}`))
+        .catch((err) =>
+          handleError(`Error while posting on twitter\n${err}`),
+        );
+    }, channel.delay + 0.5 * 60000);
   },
 };
