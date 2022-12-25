@@ -25,7 +25,7 @@ const client = new Client({
       },
     ],
   },
-  intents: ['MessageContent', 'GuildMessages'],
+  intents: ['MessageContent', 'GuildMessages', 'Guilds'],
 });
 
 // -> Create commands collection
@@ -51,6 +51,7 @@ for (const folder of commandFolders) {
 // -> Handle Events
 for (const file of eventFiles) {
   const event = require(`./events/${file}`);
+
   if (event.once) {
     client.once(event.name, (...args) => event.execute(...args));
   } else {
