@@ -60,7 +60,7 @@ module.exports = {
     await postToTwitter(tweet, imageToPost);
 
     // -> Post to st
-    // await postToStockTwits(tweet, imageToPost);
+    await postToStockTwits(tweet, imageToPost);
 
     // -> Send message
     await interaction.editReply({
