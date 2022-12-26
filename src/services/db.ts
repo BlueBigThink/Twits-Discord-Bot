@@ -28,7 +28,7 @@ export default class Database {
    * @param table - Table name
    * @param id - Item ID
    */
-  static async get<T>(table: string, id: string): Promise<T> {
+  static async get<T>(table: string, id: string): Promise<T | null> {
     const db = await fs.readFile(dbPath, 'utf-8');
     return JSON.parse(db)[table].find((item: any) => item.id === id);
   }

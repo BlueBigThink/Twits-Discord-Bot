@@ -21,7 +21,7 @@ export default class Users extends Database {
    * Get a single user
    * @param id - User ID
    */
-  static async getOneById(id: string): Promise<User> {
+  static async getOneById(id: string): Promise<User | null> {
     return super.get<User>('users', id);
   }
 

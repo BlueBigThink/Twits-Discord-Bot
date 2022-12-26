@@ -22,7 +22,7 @@ module.exports = {
     // -> Ignore if user is not whitelisted
     const isUserWhitelisted = await Users.isWhitelisted(message.author.id);
 
-    if (!isUserWhitelisted) return;
+    if (!isUserWhitelisted && !message.webhookId) return;
 
     // -> Ignore if message is not in one of the channels
     const isChannelTracked = await Channels.isTracked(message.channel.id);
@@ -74,13 +74,15 @@ module.exports = {
     const channel = await Channels.getOneById(message.channel.id);
 
     const stocktwitsMsg = `${tweet}${
-      user.twitstockUsername
+      user && user.twitstockUsername
         ? `\nPosted by @${user.twitstockUsername}`
         : ''
     }${channel.delay ? `\nDelay: ${channel.delay} min` : ''}`;
 
     const twitterMsg = `${tweet}${
-      user.twitterUsername ? `\nPosted by @${user.twitterUsername}` : ''
+      user && user.twitterUsername
+        ? `\nPosted by @${user.twitterUsername}`
+        : ''
     }${channel.delay ? `\nDelay: ${channel.delay} min` : ''}\n${hashtags}`;
 
     // -> Send to Twitter & Stocktwits
