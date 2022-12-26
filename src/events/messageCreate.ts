@@ -42,7 +42,9 @@ module.exports = {
           formattedMessage,
           new Date(),
           message.author.username,
-          message.author.displayAvatarURL(),
+          message.author.displayAvatarURL({
+            extension: 'jpg',
+          }),
         ),
       );
 

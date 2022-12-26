@@ -43,7 +43,9 @@ module.exports = {
       formattedMessage,
       new Date(),
       interaction.user.username,
-      interaction.user.displayAvatarURL(),
+      interaction.user.displayAvatarURL({
+        extension: 'jpg',
+      }),
     );
 
     const attachment = new AttachmentBuilder(generatedImage);
