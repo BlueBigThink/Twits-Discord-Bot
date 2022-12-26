@@ -3,7 +3,7 @@ import coins from '@assets/json/coins.json';
 import crypto from '@assets/json/crypto.json';
 import futures from '@assets/json/futures.json';
 import stocks from '@assets/json/stocks.json';
-import { createCanvas, loadImage, registerFont } from 'canvas';
+import { Canvas, createCanvas, loadImage, registerFont } from 'canvas';
 import { Attachment } from 'discord.js';
 
 // Init
@@ -37,11 +37,23 @@ export const generateMessageImage = async (
   displayName: string,
   avatarUrl: string,
 ) => {
+  const date = `Today at ${dateTime.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
+  })}`;
+
   // -> Create canvas with dynamic width/height based on content
-  const canvas = createCanvas(
+  const width = Math.min(
     400,
-    Math.max(200, 64 + Math.ceil(content.length / 100) * 16),
+    Math.max(
+      64 + Math.ceil(displayName.length * 8 + date.length * 8),
+      64 + Math.ceil(content.length * 8),
+    ),
   );
+  const height = 64 + Math.ceil(content.length / (width / 14)) * 16;
+
+  const canvas = createCanvas(width, height);
   const context = canvas.getContext('2d');
 
   // -> Register font
@@ -74,11 +86,6 @@ export const generateMessageImage = async (
   );
 
   // -> Draw date
-  const date = `Today at ${dateTime.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: true,
-  })}`;
   context.font = '12px Noto Sans';
   const dateSize = context.measureText(date);
   context.fillStyle = '#b9bbbe';
@@ -90,7 +97,6 @@ export const generateMessageImage = async (
 
   // -> Draw content and break lines where line is too long
   context.font = '16px Noto Sans';
-  const contentSize = context.measureText(content);
   context.fillStyle = '#dcddde';
   const lines = content.split('\n');
   let lineY = usernameSize.actualBoundingBoxAscent + 20;
@@ -126,6 +132,30 @@ export const generateMessageImage = async (
     }
   }
 
+  // -> Create another canvas with 1:2 ratio to fix twitter image with above canvas image centered veritcally and horizontally
+  const canvas2 = createCanvas(canvas.width, canvas.width / 2);
+
+  // -> Draw above canvas image centered veritcally and horizontally (and resize it to fit without stretching or cropping)
+  const context2 = canvas2.getContext('2d');
+
+  const hRatio = canvas2.width / canvas.width;
+  const vRatio = canvas2.height / canvas.height;
+  const ratio = Math.min(hRatio, vRatio);
+  const centerShift_x = (canvas2.width - canvas.width * ratio) / 2;
+  const centerShift_y = (canvas2.height - canvas.height * ratio) / 2;
+  context2.clearRect(0, 0, canvas2.width, canvas2.height);
+  context2.drawImage(
+    canvas,
+    0,
+    0,
+    canvas.width,
+    canvas.height,
+    centerShift_x,
+    centerShift_y,
+    canvas.width * ratio,
+    canvas.height * ratio,
+  );
+
   // -> Return buffer
-  return canvas.toBuffer();
+  return canvas2.toBuffer();
 };

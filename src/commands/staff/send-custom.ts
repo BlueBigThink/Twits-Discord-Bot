@@ -52,15 +52,19 @@ module.exports = {
       ? await discordAttachmentToBuffer(image)
       : generatedImage;
 
+    let tweet = formattedMessage;
+
+    if (tweet.length > 280) tweet = `${tweet.substring(0, 277)}...`;
+
     // -> Post to twitter
-    await postToTwitter(formattedMessage, imageToPost);
+    await postToTwitter(tweet, imageToPost);
 
     // -> Post to st
-    // await postToStockTwits(formattedMessage, imageToPost);
+    // await postToStockTwits(tweet, imageToPost);
 
     // -> Send message
     await interaction.editReply({
-      content: `**Posted to Twitter & StockTwits:** ${formattedMessage}`,
+      content: `**Posted to Twitter & StockTwits:** ${tweet}`,
       files: image ? [image] : [attachment],
     });
   },
