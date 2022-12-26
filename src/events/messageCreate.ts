@@ -54,13 +54,13 @@ module.exports = {
       );
 
     // -> This channel's config
-    const channelConfig = await Channels.getOneById(message.channel.id);
+    const channel = await Channels.getOneById(message.channel.id);
+
+    if (!channel)
+      return handleError(`Channel not found: ${message.channel.id}`);
 
     // -> Get hashtags
-    const hashtags = getHashTags(
-      channelConfig.category,
-      channelConfig.hashtagCount,
-    );
+    const hashtags = getHashTags(channel.category, channel.hashtagCount);
 
     let tweet = formattedMessage;
 
@@ -71,10 +71,6 @@ module.exports = {
     if (tweet.length > 220) tweet = `${tweet.substring(0, 217)}...`;
 
     const user = await Users.getOneById(message.author.id);
-    const channel = await Channels.getOneById(message.channel.id);
-
-    if (!channel)
-      return handleError(`Channel not found: ${message.channel.id}`);
 
     const stocktwitsMsg = `${tweet}${
       user && user.twitstockUsername
