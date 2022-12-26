@@ -73,6 +73,9 @@ module.exports = {
     const user = await Users.getOneById(message.author.id);
     const channel = await Channels.getOneById(message.channel.id);
 
+    if (!channel)
+      return handleError(`Channel not found: ${message.channel.id}`);
+
     const stocktwitsMsg = `${tweet}${
       user && user.twitstockUsername
         ? `\nPosted by @${user.twitstockUsername}`

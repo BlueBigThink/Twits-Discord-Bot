@@ -22,7 +22,7 @@ export default class Channels extends Database {
    * Get a single channel
    * @param id - Channel ID
    */
-  static async getOneById(id: string): Promise<Channel> {
+  static async getOneById(id: string): Promise<Channel | null> {
     return super.get<Channel>('channels', id);
   }
 
