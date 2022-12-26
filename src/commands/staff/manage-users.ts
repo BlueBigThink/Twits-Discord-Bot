@@ -22,16 +22,12 @@ module.exports = {
         .addStringOption((option) =>
           option
             .setName('twitter-username')
-            .setDescription('Twitter username of the user')
-
-            .setRequired(true),
+            .setDescription('Twitter username of the user'),
         )
         .addStringOption((option) =>
           option
             .setName('twitstock-username')
-            .setDescription('TwitStock username of the user')
-
-            .setRequired(true),
+            .setDescription('TwitStock username of the user'),
         ),
     )
     .addSubcommand((subcommand) =>

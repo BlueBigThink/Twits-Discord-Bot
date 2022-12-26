@@ -4,8 +4,8 @@ import Database from '@services/db';
 // Types
 interface User {
   id: string;
-  twitterUsername: string;
-  twitstockUsername: string;
+  twitterUsername?: string;
+  twitstockUsername?: string;
 }
 
 // Users table
