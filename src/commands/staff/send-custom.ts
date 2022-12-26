@@ -27,9 +27,9 @@ module.exports = {
       option.setName('image').setDescription('Image to send'),
     ),
   async execute(interaction: ChatInputCommandInteraction) {
-    await interaction.deferReply({
-      ephemeral: true,
-    });
+    // await interaction.deferReply({
+    //   ephemeral: true,
+    // });
 
     // -> Options
     const message = interaction.options.getString('message', true);
@@ -38,6 +38,13 @@ module.exports = {
     // -> Format message
     const formattedMessage = formatMessageContentToTweet(message);
 
+    console.log({
+      image: interaction.user.displayAvatarURL({
+        extension: 'jpg',
+        forceStatic: true,
+      }),
+    });
+
     // -> Generate image
     const generatedImage = await generateMessageImage(
       formattedMessage,
@@ -45,6 +52,7 @@ module.exports = {
       interaction.user.username,
       interaction.user.displayAvatarURL({
         extension: 'jpg',
+        forceStatic: true,
       }),
     );
 
@@ -65,9 +73,10 @@ module.exports = {
     await postToStockTwits(tweet, imageToPost);
 
     // -> Send message
-    await interaction.editReply({
+    await interaction.reply({
       content: `**Posted to Twitter & StockTwits:** ${tweet}`,
       files: image ? [image] : [attachment],
+      ephemeral: true,
     });
   },
 };

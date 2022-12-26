@@ -44,6 +44,7 @@ module.exports = {
           message.author.username,
           message.author.displayAvatarURL({
             extension: 'jpg',
+            forceStatic: true,
           }),
         ),
       );
