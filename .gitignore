@@ -172,3 +172,4 @@ $RECYCLE.BIN/
 
 # Custom
 *.dev.json
+!.env.prod
