@@ -43,7 +43,7 @@ module.exports = {
           new Date(),
           message.author.username,
           message.author.displayAvatarURL({
-            extension: 'jpg',
+            extension: 'png',
             forceStatic: true,
           }),
         ),

@@ -40,7 +40,7 @@ module.exports = {
 
     console.log({
       image: interaction.user.displayAvatarURL({
-        extension: 'jpg',
+        extension: 'png',
         forceStatic: true,
       }),
     });
@@ -51,7 +51,7 @@ module.exports = {
       new Date(),
       interaction.user.username,
       interaction.user.displayAvatarURL({
-        extension: 'jpg',
+        extension: 'png',
         forceStatic: true,
       }),
     );
