@@ -12,6 +12,8 @@ run ```yarn deploy-commands``` to deploy the commands
 ---
 Uses slash commands, self-explanatory.
 
+```/send-custom [message content] [image]``` - Post to twitter/stocktwits
+
 ```/manage-channels-add [channel] [category] [delay] [# of hashtags]``` - Adds channel to whitelist
 
 ```/manage-user-add [@user] [twitter username] [stocktwits username]``` - Adds user to whitelist
