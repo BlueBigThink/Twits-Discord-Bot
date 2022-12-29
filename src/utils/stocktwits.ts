@@ -17,9 +17,9 @@ export const postToStockTwits = async (content: string, image: Buffer) => {
   });
 
   // -> Form Data
-  const bodyFormData = new FormData();
+  const bodyFormData = new URLSearchParams();
   bodyFormData.append('body', content);
-  bodyFormData.append('chart', image as any, 'image.png');
+  bodyFormData.append('chart', image as any);
 
   // -> Post to StockTwits
   try {
