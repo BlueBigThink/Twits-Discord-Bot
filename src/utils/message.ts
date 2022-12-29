@@ -51,7 +51,7 @@ export const generateMessageImage = async (
       64 + Math.ceil(content.length * 8),
     ),
   );
-  const height = 64 + Math.ceil(content.length / (width / 14)) * 16;
+  const height = 64 + Math.ceil(content.length / (width / 14)) * 15;
 
   const canvas = createCanvas(width, height);
   const context = canvas.getContext('2d');
@@ -66,13 +66,13 @@ export const generateMessageImage = async (
   context.fillRect(0, 0, canvas.width, canvas.height);
   context.save();
 
-  // -> Draw Avatar rounded with margin of 16px from left and 4px from top
+  // -> Draw Avatar rounded with margin of 16px from left and 16px from top
   const avatar = await loadImage(avatarUrl);
   context.beginPath();
-  context.arc(16 + 40 / 2, 4 + 40 / 2, 40 / 2, 0, Math.PI * 2, true);
+  context.arc(16 + 40 / 2, 16 + 40 / 2, 40 / 2, 0, Math.PI * 2, true);
   context.closePath();
   context.clip();
-  context.drawImage(avatar, 16, 4, 40, 40);
+  context.drawImage(avatar, 16, 16, 40, 40);
   context.restore();
 
   // -> Draw username
@@ -82,7 +82,7 @@ export const generateMessageImage = async (
   context.fillText(
     displayName,
     64,
-    usernameSize.actualBoundingBoxAscent + 8,
+    usernameSize.actualBoundingBoxAscent + 20,
   );
 
   // -> Draw date
@@ -92,14 +92,14 @@ export const generateMessageImage = async (
   context.fillText(
     date,
     64 + 8 + usernameSize.width,
-    dateSize.actualBoundingBoxAscent + 12,
+    dateSize.actualBoundingBoxAscent + 24,
   );
 
   // -> Draw content and break lines where line is too long
   context.font = '16px Noto Sans';
   context.fillStyle = '#dcddde';
   const lines = content.split('\n');
-  let lineY = usernameSize.actualBoundingBoxAscent + 20;
+  let lineY = usernameSize.actualBoundingBoxAscent + 24;
   for (const line of lines) {
     const lineSize = context.measureText(line);
     if (lineSize.width > canvas.width - 64) {
