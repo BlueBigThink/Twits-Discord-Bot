@@ -2,6 +2,7 @@
 import { stocktwitsApiKey } from '@keys';
 import axios from 'axios';
 import { handleError } from '@utils';
+import FormData from 'form-data';
 
 // STOCK TWIT UTILS
 /**
@@ -17,9 +18,9 @@ export const postToStockTwits = async (content: string, image: Buffer) => {
   });
 
   // -> Form Data
-  const bodyFormData = new URLSearchParams();
+  const bodyFormData = new FormData();
   bodyFormData.append('body', content);
-  bodyFormData.append('chart', image as any);
+  bodyFormData.append('chart', image as any, 'image.png');
 
   // -> Post to StockTwits
   try {
