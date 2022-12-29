@@ -1,47 +1,27 @@
-# TH-twits
-Bot that relay messages from discord to Twitter and Stocktwits
+# twits
+Bot that relays messages from discord to Twitter and Stocktwits, from specified channels and users. 
+- Cashtags tickers by detecting words in all caps and cross-checking against list of stocks, futures, & crypto tickers. 
+- Uses any number amount of hashtags randomly picked from a list. Hashtags categories are set for stocks, futures, & crypto.
+- Users with twitter/stocktwits usernames assigned to their Discord ID are @mentioned in posts
+- Creates image replicating Discord message, uploaded with every post.
+- When image is posted with Discord message it uses that image rather than generating image.
 
-Commands
+---
+run ```yarn deploy-commands``` to deploy the commands
 
-`st!addch <channelMention> <currency> <delay>optional <totalHashtags>optional`
+---
+Uses slash commands, self-explanatory.
 
-`st!remch <channelMention>`
+```/send-custom [message content] [image]``` - Post to twitter/stocktwits
 
-`st!send <message>`
+```/manage-channels-add [channel] [category] [delay] [# of hashtags]``` - Adds channel to whitelist
 
+```/manage-user-add [@user] [twitter username] [stocktwits username]``` - Adds user to whitelist
 
-2 tokens are required
+```/manage-channels-remove [channe]``` - Removes channel from whitelist
 
-user_token is for the Discord account used to login and take a screenshot of the messages being relayed. !USE AN ALT!
-access_token is stocktwits token
+```/manage-user-remove [@user]``` - Removes user from whitelist
 
-if using linux, make sure 'executable path' on line 16 is set to your chromedriver path
-/usr/lib/chromium-browser/chromedriver
+```/manage-channels-list``` - Shows list of whitelisted channels
 
-**to get stocktwits access_token**
-
-to get stocktwits auth key paste this in browser console;
-
-or f12 > application > in storage click cookies > stocktwits.com > access_token
-
-OR paste this in browser console
-
-```function getCookie(cname) {
-  var name = cname + "=";
-  var ca = document.cookie.split(';');
-  for(var i = 0; i < ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
-}
-console.log(getCookie("access_token"))```
-
-^^ stocktwits access_token
-#
-© [Trade Hub](https://thetradehub.net)
+```/manage-users-list``` - Shows list of whitelisted users
