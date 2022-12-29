@@ -11,6 +11,11 @@ import { handleError } from '@utils';
  * @param image - Image to post
  */
 export const postToStockTwits = async (content: string, image: Buffer) => {
+  console.log('Posting to StockTwits...', {
+    content,
+    image,
+  });
+
   // -> Form Data
   const bodyFormData = new FormData();
   bodyFormData.append('body', content);
