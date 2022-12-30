@@ -54,13 +54,10 @@ module.exports = {
       case 'add':
         // --> Options
         const userToAdd = interaction.options.getUser('user', true);
-        const twitterUsername = interaction.options.getString(
-          'twitter-username',
-          true,
-        );
+        const twitterUsername =
+          interaction.options.getString('twitter-username');
         const twitstockUsername = interaction.options.getString(
           'twitstock-username',
-          true,
         );
 
         // --> Check if user is whitelisted
@@ -77,8 +74,8 @@ module.exports = {
         // --> Add user to database
         await Users.setOneById(userToAdd.id, {
           id: userToAdd.id,
-          twitterUsername,
-          twitstockUsername,
+          twitterUsername: twitterUsername || undefined,
+          twitstockUsername: twitstockUsername || undefined,
         });
 
         await interaction.reply({
