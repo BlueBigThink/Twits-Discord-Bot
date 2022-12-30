@@ -51,7 +51,7 @@ export const generateMessageImage = async (
       64 + Math.ceil(content.length * 8),
     ),
   );
-  const height = 64 + Math.ceil(content.length / (width / 14)) * 15;
+  const height = 32 + Math.ceil(content.length / (width / 16)) * 15;
 
   const canvas = createCanvas(width, height);
   const context = canvas.getContext('2d');
