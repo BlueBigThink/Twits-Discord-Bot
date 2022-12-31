@@ -16,9 +16,6 @@ import { Attachment, AttachmentBuilder, Message } from 'discord.js';
 module.exports = {
   name: 'messageCreate',
   async execute(message: Message) {
-    // -> Ignore if message is from a bot
-    if (message.author.bot) return;
-
     // -> Ignore if user is not whitelisted
     const isUserWhitelisted = await Users.isWhitelisted(message.author.id);
 
