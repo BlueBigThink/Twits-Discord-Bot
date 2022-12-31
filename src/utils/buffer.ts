@@ -1,4 +1,5 @@
 // IMPORTS
+import axios from 'axios';
 import { Attachment, AttachmentBuilder } from 'discord.js';
 import { Stream } from 'stream';
 
@@ -31,6 +32,12 @@ export const discordAttachmentToBuffer = async (
   if (att instanceof Buffer) return att;
   // -> If attachment is a stream, convert it to a buffer
   else if (att instanceof Stream) return streamToBuffer(att);
-  // -> If attachment is a string, convert it to a buffer
-  else return Buffer.from(att);
+  // -> If attachment is a string, download it and convert it to a buffer
+  else {
+    const { data } = await axios(String(att), {
+      responseType: 'arraybuffer',
+    });
+
+    return Buffer.from(data, 'base64');
+  }
 };
