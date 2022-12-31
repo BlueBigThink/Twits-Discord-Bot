@@ -73,13 +73,13 @@ module.exports = {
     const stocktwitsMsg = `${tweet}${
       user && user.twitstockUsername
         ? `\nPosted by @${user.twitstockUsername}`
-        : ''
+        : `Posted by @${message.author.username}`
     }${channel.delay ? `\nDelay: ${channel.delay} min` : ''}`;
 
     const twitterMsg = `${tweet}${
       user && user.twitterUsername
         ? `\nPosted by @${user.twitterUsername}`
-        : ''
+        : `Posted by @${message.author.username}`
     }${channel.delay ? `\nDelay: ${channel.delay} min` : ''}\n${hashtags}`;
 
     // -> Send to Twitter & Stocktwits
