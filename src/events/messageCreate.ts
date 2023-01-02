@@ -4,8 +4,8 @@ import Users from '@services/users';
 import {
   discordAttachmentToBuffer,
   formatMessageContentToTweet,
-  generateMessageImage,
   getHashTags,
+  getMessageScreenshot,
   handleError,
   postToStockTwits,
   postToTwitter,
@@ -34,17 +34,7 @@ module.exports = {
       message.attachments.first();
 
     if (!image)
-      image = new AttachmentBuilder(
-        await generateMessageImage(
-          formattedMessage,
-          new Date(),
-          message.author.username,
-          message.author.displayAvatarURL({
-            extension: 'png',
-            forceStatic: true,
-          }),
-        ),
-      );
+      image = new AttachmentBuilder(await getMessageScreenshot(message));
 
     if (!image)
       return handleError(

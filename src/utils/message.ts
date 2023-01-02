@@ -3,11 +3,14 @@ import coins from '@assets/json/coins.json';
 import crypto from '@assets/json/crypto.json';
 import futures from '@assets/json/futures.json';
 import stocks from '@assets/json/stocks.json';
-import { Canvas, createCanvas, loadImage, registerFont } from 'canvas';
-import { Attachment } from 'discord.js';
+import { Message, User } from 'discord.js';
+import { createCanvas, loadImage } from 'canvas';
+import puppeteer, { Browser } from 'puppeteer';
+import { handleError } from './misc';
 
 // Init
 const tickers = [...coins, ...crypto, ...futures, ...stocks];
+let browser: Browser | null;
 
 // MESSAGE UTILS
 /**
@@ -31,131 +34,168 @@ export const formatMessageContentToTweet = (content: string) => {
   return contentWithUpdatedTickers;
 };
 
-export const generateMessageImage = async (
-  content: string,
-  dateTime: Date,
-  displayName: string,
-  avatarUrl: string,
+export const messageToBase64 = (
+  message: Message | string,
+  user?: User,
 ) => {
-  const date = `Today at ${dateTime.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: true,
-  })}`;
+  if (typeof message === 'string' && user) {
+    const content = JSON.stringify({
+      messages: [
+        {
+          data: {
+            content: message,
+            embeds: null,
+            username: user.username,
+            avatar_url: user.displayAvatarURL({
+              extension: 'png',
+              forceStatic: true,
+            }),
+            attachments: [],
+          },
+        },
+      ],
+    });
 
-  // -> Create canvas with dynamic width/height based on content
-  const width = Math.min(
-    400,
-    Math.max(
-      64 + Math.ceil(displayName.length * 8 + date.length * 8),
-      64 + Math.ceil(content.length * 8),
-    ),
-  );
-  const height = 32 + Math.ceil(content.length / (width / 16)) * 15;
+    // -> return base64url
+    return Buffer.from(content)
+      .toString('base64')
+      .replace(/=/g, '')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_');
+  } else if (message instanceof Message) {
+    return Buffer.from(
+      JSON.stringify({
+        messages: [
+          {
+            data: {
+              content: message.content,
+              embeds: message.embeds.length
+                ? message.embeds.map((embed) => embed.toJSON())
+                : null,
+              username: message.author.username,
+              avatar_url: message.author.displayAvatarURL({
+                extension: 'png',
+                forceStatic: true,
+              }),
+              attachments: message.attachments.map((attachment) =>
+                attachment.toJSON(),
+              ),
+            },
+          },
+        ],
+      }),
+    )
+      .toString('base64')
+      .replace(/=/g, '')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_');
+  } else throw new Error('Invalid message type');
+};
 
-  const canvas = createCanvas(width, height);
-  const context = canvas.getContext('2d');
+export const getMessageScreenshot = async (
+  message: Message | string,
+  user?: User,
+) => {
+  const data = messageToBase64(message, user);
 
-  // -> Register font
-  registerFont('./src/assets/fonts/NotoSans.ttf', {
-    family: 'Noto Sans',
-  });
+  console.log({ data });
 
-  // -> Draw background
-  context.fillStyle = '#2f3136';
-  context.fillRect(0, 0, canvas.width, canvas.height);
-  context.save();
+  // -> If browser is not initialized, initialize it
+  if (!browser)
+    browser = await puppeteer.launch({
+      headless: false,
+      args: ['--window-size=1200,1080'],
+    });
 
-  // -> Draw Avatar rounded with margin of 16px from left and 16px from top
-  const avatar = await loadImage(avatarUrl);
-  context.beginPath();
-  context.arc(16 + 40 / 2, 16 + 40 / 2, 40 / 2, 0, Math.PI * 2, true);
-  context.closePath();
-  context.clip();
-  context.drawImage(avatar, 16, 16, 40, 40);
-  context.restore();
+  const page = await browser.newPage();
 
-  // -> Draw username
-  context.font = '16px Noto Sans';
-  const usernameSize = context.measureText(displayName);
-  context.fillStyle = '#fff';
-  context.fillText(
-    displayName,
-    64,
-    usernameSize.actualBoundingBoxAscent + 20,
-  );
+  await page.setViewport({ width: 1200, height: 1080 });
 
-  // -> Draw date
-  context.font = '12px Noto Sans';
-  const dateSize = context.measureText(date);
-  context.fillStyle = '#b9bbbe';
-  context.fillText(
-    date,
-    64 + 8 + usernameSize.width,
-    dateSize.actualBoundingBoxAscent + 24,
-  );
+  try {
+    await page.goto(`https://discohook.org/?data=${data}`, {
+      waitUntil: 'domcontentloaded',
+      timeout: 30000,
+    });
 
-  // -> Draw content and break lines where line is too long
-  context.font = '16px Noto Sans';
-  context.fillStyle = '#dcddde';
-  const lines = content.split('\n');
-  let lineY = usernameSize.actualBoundingBoxAscent + 24;
-  for (const line of lines) {
-    const lineSize = context.measureText(line);
-    if (lineSize.width > canvas.width - 64) {
-      const words = line.split(' ');
-      let currentLine = '';
-      for (const word of words) {
-        const currentLineSize = context.measureText(currentLine);
-        const wordSize = context.measureText(word);
-        if (currentLineSize.width + wordSize.width < canvas.width - 64) {
-          currentLine += `${word} `;
-        } else {
-          context.fillText(
-            currentLine,
-            64,
-            lineY + lineSize.actualBoundingBoxAscent,
-          );
-          lineY += 24;
-          currentLine = `${word} `;
-        }
-      }
-      context.fillText(
-        currentLine,
-        64,
-        lineY + lineSize.actualBoundingBoxAscent,
+    // -> Wait for date to load
+    await page.waitForFunction(() => {
+      const date = document.querySelector(
+        'main > div > div > div :nth-child(4)',
       );
-      lineY += 24;
-    } else {
-      context.fillText(line, 64, lineY + lineSize.actualBoundingBoxAscent);
-      lineY += 24;
+
+      if (date?.textContent?.startsWith('Today')) return true;
+      else return false;
+    });
+
+    // -> Remove the span with BOT text if user is not a bot
+    if (
+      (user && !user.bot) ||
+      (message instanceof Message && !message.author.bot)
+    ) {
+      await page.evaluate(() => {
+        const span = document.querySelector(
+          'main > div > div > div > span',
+        );
+
+        if (span) span.remove();
+      });
     }
+
+    // -> Take screenshot of an element
+    const element = await page.$('main > div > div');
+
+    const screenshot = await element?.screenshot();
+
+    // -> Get width & height of the element
+    const [width, height] = await page.evaluate(() => {
+      const element = document.querySelector('main > div > div');
+
+      if (element) return [element.clientWidth, element.clientHeight];
+      else return [0, 0];
+    });
+
+    // -> Close page
+    await page.close();
+
+    // -> Create canvas using the screenshot buffer
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+
+    const image = await loadImage(screenshot as Buffer);
+
+    ctx.drawImage(image, 0, 0, width, height);
+
+    // -> Create another canvas with 1:2 ratio to fix twitter image with above canvas image centered veritcally and horizontally
+    const canvas2 = createCanvas(canvas.width, canvas.width / 2);
+
+    // -> Draw above canvas image centered veritcally and horizontally (and resize it to fit without stretching or cropping)
+    const context2 = canvas2.getContext('2d');
+
+    const hRatio = canvas2.width / canvas.width;
+    const vRatio = canvas2.height / canvas.height;
+    const ratio = Math.min(hRatio, vRatio);
+    const centerShift_x = (canvas2.width - canvas.width * ratio) / 2;
+    const centerShift_y = (canvas2.height - canvas.height * ratio) / 2;
+    context2.clearRect(0, 0, canvas2.width, canvas2.height);
+    context2.drawImage(
+      canvas,
+      0,
+      0,
+      canvas.width,
+      canvas.height,
+      centerShift_x,
+      centerShift_y,
+      canvas.width * ratio,
+      canvas.height * ratio,
+    );
+
+    // -> Return buffer
+    return canvas2.toBuffer();
+  } catch (e) {
+    // -> Close page
+    await page.close();
+
+    handleError(e);
+    throw e;
   }
-
-  // -> Create another canvas with 1:2 ratio to fix twitter image with above canvas image centered veritcally and horizontally
-  const canvas2 = createCanvas(canvas.width, canvas.width / 2);
-
-  // -> Draw above canvas image centered veritcally and horizontally (and resize it to fit without stretching or cropping)
-  const context2 = canvas2.getContext('2d');
-
-  const hRatio = canvas2.width / canvas.width;
-  const vRatio = canvas2.height / canvas.height;
-  const ratio = Math.min(hRatio, vRatio);
-  const centerShift_x = (canvas2.width - canvas.width * ratio) / 2;
-  const centerShift_y = (canvas2.height - canvas.height * ratio) / 2;
-  context2.clearRect(0, 0, canvas2.width, canvas2.height);
-  context2.drawImage(
-    canvas,
-    0,
-    0,
-    canvas.width,
-    canvas.height,
-    centerShift_x,
-    centerShift_y,
-    canvas.width * ratio,
-    canvas.height * ratio,
-  );
-
-  // -> Return buffer
-  return canvas2.toBuffer();
 };

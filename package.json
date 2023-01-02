@@ -21,6 +21,7 @@
     "form-data": "^4.0.0",
     "lodash": "^4.17.21",
     "module-alias": "^2.2.2",
+    "puppeteer": "^19.4.1",
     "twitter-api-client": "^1.6.1"
   },
   "devDependencies": {

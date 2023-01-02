@@ -3,8 +3,8 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import {
   discordAttachmentToBuffer,
   formatMessageContentToTweet,
-  generateMessageImage,
   postToStockTwits,
+  getMessageScreenshot,
   postToTwitter,
 } from '@utils';
 import {
@@ -27,9 +27,9 @@ module.exports = {
       option.setName('image').setDescription('Image to send'),
     ),
   async execute(interaction: ChatInputCommandInteraction) {
-    // await interaction.deferReply({
-    //   ephemeral: true,
-    // });
+    await interaction.deferReply({
+      ephemeral: true,
+    });
 
     // -> Options
     const message = interaction.options.getString('message', true);
@@ -38,22 +38,10 @@ module.exports = {
     // -> Format message
     const formattedMessage = formatMessageContentToTweet(message);
 
-    console.log({
-      image: interaction.user.displayAvatarURL({
-        extension: 'png',
-        forceStatic: true,
-      }),
-    });
-
     // -> Generate image
-    const generatedImage = await generateMessageImage(
+    const generatedImage = await getMessageScreenshot(
       formattedMessage,
-      new Date(),
-      interaction.user.username,
-      interaction.user.displayAvatarURL({
-        extension: 'png',
-        forceStatic: true,
-      }),
+      interaction.user,
     );
 
     const attachment = new AttachmentBuilder(generatedImage);
@@ -73,10 +61,9 @@ module.exports = {
     await postToStockTwits(tweet, imageToPost);
 
     // -> Send message
-    await interaction.reply({
+    await interaction.editReply({
       content: `**Posted to Twitter & StockTwits:** ${tweet}`,
       files: image ? [image] : [attachment],
-      ephemeral: true,
     });
   },
 };
