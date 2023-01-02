@@ -102,10 +102,7 @@ export const getMessageScreenshot = async (
 
   // -> If browser is not initialized, initialize it
   if (!browser)
-    browser = await puppeteer.launch({
-      headless: false,
-      args: ['--window-size=1200,1080'],
-    });
+    browser = await puppeteer.launch();
 
   const page = await browser.newPage();
 
