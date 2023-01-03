@@ -27,7 +27,13 @@ module.exports = {
     if (!isChannelTracked) return;
 
     // -> Format message
-    const formattedMessage = formatMessageContentToTweet(message.embeds.length && message.embeds[0].description ? message.embeds[0].description : message.content);
+    const formattedMessage = formatMessageContentToTweet(
+      message.embeds.length &&
+        message.embeds[0].title &&
+        message.embeds[0].description
+        ? `${message.embeds[0].title}\n${message.embeds[0].description}`
+        : message.content,
+    );
 
     // -> Check if an image is attached
     let image: Attachment | AttachmentBuilder | undefined =
