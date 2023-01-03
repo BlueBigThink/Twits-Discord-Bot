@@ -156,6 +156,14 @@ export const getMessageScreenshot = async (
     // -> Close page
     await page.close();
 
+    // -> Return screenshot if message's content has 200+ characters or an embed
+    if (
+      (message instanceof Message &&
+        (message.content.length > 200 || message.embeds.length)) ||
+      (typeof message === 'string' && message.length > 200)
+    )
+      return screenshot as Buffer;
+
     // -> Create canvas using the screenshot buffer
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext('2d');
