@@ -20,7 +20,10 @@ let browser: Browser | null;
  */
 export const formatMessageContentToTweet = (content: string) => {
   // -> Remove all mentions
-  const contentWithoutMentions = content.replace(/<@!?\d+>/g, '');
+  const contentWithoutMentions = content
+    .replace(/<@!?\d+>/g, '')
+    // -> Remove @everyone & @here
+    .replace(/@(everyone|here)/g, '');
 
   // -> Updates all tickers (later will be replaced by api)
   const contentWithUpdatedTickers = contentWithoutMentions.replace(
@@ -101,8 +104,7 @@ export const getMessageScreenshot = async (
   console.log({ data });
 
   // -> If browser is not initialized, initialize it
-  if (!browser)
-    browser = await puppeteer.launch();
+  if (!browser) browser = await puppeteer.launch();
 
   const page = await browser.newPage();
 
