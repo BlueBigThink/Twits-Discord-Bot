@@ -22,6 +22,8 @@ export const formatMessageContentToTweet = (content: string) => {
   // -> Remove all mentions
   const contentWithoutMentions = content
     .replace(/<@!?\d+>/g, '')
+    // -> Remove all role mentions
+    .replace(/<@&\d+>/g, '')
     // -> Remove @everyone & @here
     .replace(/@(everyone|here)/g, '');
 
