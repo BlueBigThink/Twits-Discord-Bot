@@ -26,6 +26,12 @@ module.exports = {
 
     if (!isChannelTracked) return;
 
+    // -> This channel's config
+    const channel = await Channels.getOneById(message.channel.id);
+
+    if (!channel)
+      return handleError(`Channel not found: ${message.channel.id}`);
+
     // -> Format message
     const formattedMessage = formatMessageContentToTweet(
       message.embeds.length &&
@@ -33,6 +39,7 @@ module.exports = {
         message.embeds[0].description
         ? `${message.embeds[0].title}\n${message.embeds[0].description}`
         : message.content,
+      channel.category,
     );
 
     // -> Check if an image is attached
@@ -46,12 +53,6 @@ module.exports = {
       return handleError(
         `Failed to generate image for message: ${message.content}`,
       );
-
-    // -> This channel's config
-    const channel = await Channels.getOneById(message.channel.id);
-
-    if (!channel)
-      return handleError(`Channel not found: ${message.channel.id}`);
 
     // -> Get hashtags
     const hashtags = getHashTags(channel.category, channel.hashtagCount);

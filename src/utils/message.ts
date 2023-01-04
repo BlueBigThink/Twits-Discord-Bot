@@ -16,8 +16,12 @@ let browser: Browser | null;
  * Format a message's content before sending it to twitter
  *
  * @param content - Content to format
+ * @param category - Channel category
  */
-export const formatMessageContentToTweet = (content: string) => {
+export const formatMessageContentToTweet = (
+  content: string,
+  category?: string,
+) => {
   // -> Remove all mentions
   const contentWithoutMentions = content
     .replace(/<@!?\d+>/g, '')
@@ -26,24 +30,51 @@ export const formatMessageContentToTweet = (content: string) => {
     // -> Remove @everyone & @here
     .replace(/@(everyone|here)/g, '');
 
-  // -> Updates all stock tickers (later will be replaced by api)
-  const contentWithUpdatedTickers = contentWithoutMentions.replace(
-    /(?<=\s|^)[A-Z]+(?=\s|$)/g,
-    (match) => {
+  // -> Updates all stock tickers
+  const contentWithUpdatedTickers = contentWithoutMentions
+    .replace(/(?<=^|\s)\$[A-Z]+(?=\s|$)/g, (match) => {
+      const cryptoTickerExists = crypto.includes(match);
+      const coinTickerExists = coins.includes(match);
+      const futuresTickerExists = futures.includes(match);
+
+      if (category)
+        return category === 'crypto' &&
+          (cryptoTickerExists || coinTickerExists)
+          ? `${match}.X`
+          : futuresTickerExists
+          ? `${match}_F`
+          : match;
+      else
+        return cryptoTickerExists || coinTickerExists
+          ? `${match}.X`
+          : futuresTickerExists
+          ? `${match}_F`
+          : match;
+    })
+    .replace(/(?<=\s|^)[A-Z]+(?=\s|$)/g, (match) => {
       const stockTickerExists = stocks.includes(match);
       const cryptoTickerExists = crypto.includes(match);
       const coinTickerExists = coins.includes(match);
       const futuresTickerExists = futures.includes(match);
 
-      return stockTickerExists
-        ? `$${match}`
-        : cryptoTickerExists || coinTickerExists
-        ? `${match}.X`
-        : futuresTickerExists
-        ? `${match}_F`
-        : match;
-    },
-  );
+      if (category)
+        return category === 'stocks' && stockTickerExists
+          ? `$${match}`
+          : category === 'crypto' &&
+            (cryptoTickerExists || coinTickerExists)
+          ? `$${match}.X`
+          : futuresTickerExists
+          ? `$${match}_F`
+          : match;
+      else
+        return stockTickerExists
+          ? `$${match}`
+          : cryptoTickerExists || coinTickerExists
+          ? `$${match}.X`
+          : futuresTickerExists
+          ? `$${match}_F`
+          : match;
+    });
 
   return contentWithUpdatedTickers;
 };
