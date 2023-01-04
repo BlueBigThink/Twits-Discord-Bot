@@ -9,7 +9,6 @@ import puppeteer, { Browser } from 'puppeteer';
 import { handleError } from './misc';
 
 // Init
-const tickers = [...coins, ...crypto, ...futures, ...stocks];
 let browser: Browser | null;
 
 // MESSAGE UTILS
@@ -27,12 +26,22 @@ export const formatMessageContentToTweet = (content: string) => {
     // -> Remove @everyone & @here
     .replace(/@(everyone|here)/g, '');
 
-  // -> Updates all tickers (later will be replaced by api)
+  // -> Updates all stock tickers (later will be replaced by api)
   const contentWithUpdatedTickers = contentWithoutMentions.replace(
     /(?<=\s|^)[A-Z]+(?=\s|$)/g,
     (match) => {
-      const tickerExists = tickers.includes(match);
-      return tickerExists ? `$${match}` : match;
+      const stockTickerExists = stocks.includes(match);
+      const cryptoTickerExists = crypto.includes(match);
+      const coinTickerExists = coins.includes(match);
+      const futuresTickerExists = futures.includes(match);
+
+      return stockTickerExists
+        ? `$${match}`
+        : cryptoTickerExists || coinTickerExists
+        ? `${match}.X`
+        : futuresTickerExists
+        ? `${match}_F`
+        : match;
     },
   );
 
