@@ -64,8 +64,9 @@ export const formatMessageContentToTweet = (
           : futuresTickerExists
           ? `$${match}_F`
           : match;
-    });
-
+    })
+    // Remove any bold/italic/underline markers
+    .replace(/(\*|_)/g, '');
   return contentWithUpdatedTickers;
 };
 
