@@ -28,7 +28,9 @@ export const formatMessageContentToTweet = (
     // -> Remove all role mentions
     .replace(/<@&\d+>/g, '')
     // -> Remove @everyone & @here
-    .replace(/@(everyone|here)/g, '');
+    .replace(/@(everyone|here)/g, '')
+    // -> Add a space after every @ if it's followed by a letter or number
+    .replace(/@(?=[a-zA-Z0-9])/g, '@ ');
 
   // -> Updates all stock tickers
   const contentWithUpdatedTickers = contentWithoutMentions
