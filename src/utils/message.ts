@@ -30,7 +30,11 @@ export const formatMessageContentToTweet = (
     // -> Remove @everyone & @here
     .replace(/@(everyone|here)/g, '')
     // -> Add a space after every @ if it's followed by a letter or number
-    .replace(/@(?=[a-zA-Z0-9])/g, '@ ');
+    .replace(/@(?=[a-zA-Z0-9])/g, '@ ')
+    // -> Remove all discord emojis
+    .replace(/<a?:\w+:\d+>/g, '')
+    // -> Remove all normal emojis
+    .replace(/[\u{1F600}-\u{1F64F}]/gu, '');
 
   // -> Updates all stock tickers
   const contentWithUpdatedTickers = contentWithoutMentions

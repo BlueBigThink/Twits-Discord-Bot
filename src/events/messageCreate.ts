@@ -10,7 +10,12 @@ import {
   postToStockTwits,
   postToTwitter,
 } from '@utils';
-import { Attachment, AttachmentBuilder, Message } from 'discord.js';
+import {
+  Attachment,
+  AttachmentBuilder,
+  Message,
+  TextChannel,
+} from 'discord.js';
 
 // MESSAGE CREATE
 module.exports = {
@@ -31,6 +36,12 @@ module.exports = {
 
     if (!channel)
       return handleError(`Channel not found: ${message.channel.id}`);
+
+    // -> Output
+    console.log({
+      content: message.content,
+      channel: (message.channel as TextChannel).name,
+    });
 
     // -> Format message
     const formattedMessage = formatMessageContentToTweet(
