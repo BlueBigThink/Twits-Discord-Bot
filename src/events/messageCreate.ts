@@ -7,6 +7,7 @@ import {
   getHashTags,
   getMessageScreenshot,
   handleError,
+  logToChannel,
   postToStockTwits,
   postToTwitter,
 } from '@utils';
@@ -37,6 +38,9 @@ module.exports = {
     if (!channel)
       return handleError(`Channel not found: ${message.channel.id}`);
 
+    // -> Log message
+    logToChannel(message.client, 'Received message', message);
+
     // -> Output
     console.log({
       content: message.content,
@@ -52,6 +56,9 @@ module.exports = {
         : message.content,
       channel.category,
     );
+
+    // -> Log formatted message
+    logToChannel(message.client, 'Formatted message', formattedMessage);
 
     // -> Check if an image is attached
     let image: Attachment | AttachmentBuilder | undefined =
@@ -89,6 +96,10 @@ module.exports = {
         ? `\nPosted by @${user.twitterUsername}`
         : `\nPosted by ${message.author.username}`
     }${channel.delay ? `\nDelay: ${channel.delay} min` : ''}\n${hashtags}`;
+
+    // -> Log tweet & stocktwit
+    logToChannel(message.client, 'Tweet', twitterMsg);
+    logToChannel(message.client, 'Stocktwit', stocktwitsMsg);
 
     // -> Send to Twitter & Stocktwits
     setTimeout(async () => {

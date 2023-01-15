@@ -3,7 +3,7 @@ import coins from '@assets/json/coins.json';
 import crypto from '@assets/json/crypto.json';
 import futures from '@assets/json/futures.json';
 import stocks from '@assets/json/stocks.json';
-import { Message, User } from 'discord.js';
+import { Client, Message, TextChannel, User } from 'discord.js';
 import { createCanvas, loadImage } from 'canvas';
 import puppeteer, { Browser } from 'puppeteer';
 import { handleError } from './misc';
@@ -36,9 +36,14 @@ export const formatMessageContentToTweet = (
     // -> Remove all normal emojis
     .replace(/[\u{1F600}-\u{1F64F}]/gu, '');
 
+  // Regex to capture all stock tickers
+  // (?<=^|\s|/) - Lookbehind for start of string or whitespace
+  // \$[A-Z]+ - $ followed by one or more capital letters
+  // (?=\s|$) - Lookahead for whitespace or end of string
+
   // -> Updates all stock tickers
   const contentWithUpdatedTickers = contentWithoutMentions
-    .replace(/(?<=^|\s)\$[A-Z]+(?=\s|$)/g, (match) => {
+    .replace(/(?<=^|\s|\/)\$[A-Z]+(?=\s|$|\/)/g, (match) => {
       if (category)
         return category === 'crypto'
           ? `${match}.X`
@@ -47,7 +52,7 @@ export const formatMessageContentToTweet = (
           : match;
       else return match;
     })
-    .replace(/(?<=\s|^)[A-Z]+(?=\s|$)/g, (match) => {
+    .replace(/(?<=\s|^|\/)[A-Z]+(?=\s|$|\/)/g, (match) => {
       const stockTickerExists = stocks.includes(match);
       const cryptoTickerExists = crypto.includes(match);
       const coinTickerExists = coins.includes(match);
@@ -244,4 +249,20 @@ export const getMessageScreenshot = async (
     handleError(e);
     throw e;
   }
+};
+
+export const logToChannel = async (
+  client: Client,
+  title: string,
+  message: Message | string,
+) => {
+  const guild = await client.guilds.fetch('929564043033870356');
+
+  const channel = (await guild.channels.fetch(
+    '1064272571958300732',
+  )) as TextChannel;
+
+  const content = message instanceof Message ? message.content : message;
+
+  channel.send(`**${title}**\n\`\`\`${content}\`\`\``);
 };
