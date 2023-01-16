@@ -44,13 +44,23 @@ export const formatMessageContentToTweet = (
   // -> Updates all stock tickers
   const contentWithUpdatedTickers = contentWithoutMentions
     .replace(/(?<=^|\s|\/)\$[A-Z]+(?=\s|$|\/)/g, (match) => {
+      const cryptoTickerExists = crypto.includes(match.slice(1));
+      const coinTickerExists = coins.includes(match.slice(1));
+      const futuresTickerExists = futures.includes(match.slice(1));
+
       if (category)
-        return category === 'crypto'
+        return category === 'crypto' &&
+          (cryptoTickerExists || coinTickerExists)
           ? `${match}.X`
-          : category === 'futures'
+          : futuresTickerExists
           ? `${match}_F`
           : match;
-      else return match;
+      else
+        return cryptoTickerExists || coinTickerExists
+          ? `${match}.X`
+          : futuresTickerExists
+          ? `${match}_F`
+          : match;
     })
     .replace(/(?<=\s|^|\/)[A-Z]+(?=\s|$|\/)/g, (match) => {
       const stockTickerExists = stocks.includes(match);
