@@ -21,6 +21,7 @@ let browser: Browser | null;
 export const formatMessageContentToTweet = (
   content: string,
   category?: string,
+  isTwitter?: boolean,
 ) => {
   // -> Remove all mentions
   const contentWithoutMentions = content
@@ -44,6 +45,8 @@ export const formatMessageContentToTweet = (
   // -> Updates all stock tickers
   const contentWithUpdatedTickers = contentWithoutMentions
     .replace(/(?<=^|\s|\/)\$[A-Z]+(?=\s|$|\/)/g, (match) => {
+      if (isTwitter) return match;
+
       const cryptoTickerExists = crypto.includes(match.slice(1));
       const coinTickerExists = coins.includes(match.slice(1));
       const futuresTickerExists = futures.includes(match.slice(1));
@@ -68,7 +71,14 @@ export const formatMessageContentToTweet = (
       const coinTickerExists = coins.includes(match);
       const futuresTickerExists = futures.includes(match);
 
-      if (category)
+      if (isTwitter && category)
+        return (category === 'stocks' && stockTickerExists) ||
+          (category === 'crypto' &&
+            (cryptoTickerExists || coinTickerExists)) ||
+          futuresTickerExists
+          ? `$${match}`
+          : match;
+      else if (category)
         return category === 'stocks' && stockTickerExists
           ? `$${match}`
           : category === 'crypto' &&

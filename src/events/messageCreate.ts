@@ -41,68 +41,95 @@ module.exports = {
     // -> Log message
     logToChannel(message.client, 'Received message', message);
 
-    // -> Output
-    console.log({
-      content: message.content,
-      channel: (message.channel as TextChannel).name,
-    });
-
-    // -> Format message
-    const formattedMessage = formatMessageContentToTweet(
-      message.embeds.length &&
-        message.embeds[0].title &&
-        message.embeds[0].description
-        ? `${message.embeds[0].title}\n${message.embeds[0].description}`
-        : message.content,
-      channel.category,
-    );
-
-    // -> Log formatted message
-    logToChannel(message.client, 'Formatted message', formattedMessage);
-
-    // -> Check if an image is attached
-    let image: Attachment | AttachmentBuilder | undefined =
-      message.attachments.first();
-
-    if (!image)
-      image = new AttachmentBuilder(await getMessageScreenshot(message));
-
-    if (!image)
-      return handleError(
-        `Failed to generate image for message: ${message.content}`,
-      );
-
-    // -> Get hashtags
-    const hashtags = getHashTags(channel.category, channel.hashtagCount);
-
-    let tweet = formattedMessage;
-
-    // -> Handle Image
-    const imageToPost = await discordAttachmentToBuffer(image);
-
-    // -> Truncate tweet if it's too long
-    if (tweet.length > 220) tweet = `${tweet.substring(0, 217)}...`;
-
-    const user = await Users.getOneById(message.author.id);
-
-    const stocktwitsMsg = `${tweet}${
-      user && user.twitstockUsername
-        ? `\nPosted by @${user.twitstockUsername}`
-        : `\nPosted by ${message.author.username}`
-    }${channel.delay ? `\nDelay: ${channel.delay} min` : ''}`;
-
-    const twitterMsg = `${tweet}${
-      user && user.twitterUsername
-        ? `\nPosted by @${user.twitterUsername}`
-        : `\nPosted by ${message.author.username}`
-    }${channel.delay ? `\nDelay: ${channel.delay} min` : ''}\n${hashtags}`;
-
-    // -> Log tweet & stocktwit
-    logToChannel(message.client, 'Tweet', twitterMsg);
-    logToChannel(message.client, 'Stocktwit', stocktwitsMsg);
-
     // -> Send to Twitter & Stocktwits
     setTimeout(async () => {
+      // -> Get updated message
+      const updatedMessage = await message.channel.messages.fetch(
+        message.id,
+      );
+
+      // -> Log updated message
+      logToChannel(
+        updatedMessage.client,
+        'Updated message',
+        updatedMessage,
+      );
+
+      // -> Format message
+      const formattedMessageTwitter = formatMessageContentToTweet(
+        updatedMessage.embeds.length &&
+          updatedMessage.embeds[0].title &&
+          updatedMessage.embeds[0].description
+          ? `${updatedMessage.embeds[0].title}\n${updatedMessage.embeds[0].description}`
+          : updatedMessage.content,
+        channel.category,
+        true,
+      );
+
+      const formattedMessageStockTwits = formatMessageContentToTweet(
+        updatedMessage.embeds.length &&
+          updatedMessage.embeds[0].title &&
+          updatedMessage.embeds[0].description
+          ? `${updatedMessage.embeds[0].title}\n${updatedMessage.embeds[0].description}`
+          : updatedMessage.content,
+        channel.category,
+      );
+
+      // -> Log formatted message
+      logToChannel(
+        updatedMessage.client,
+        'Formatted message',
+        formattedMessageStockTwits,
+      );
+
+      // -> Check if an image is attached
+      let image: Attachment | AttachmentBuilder | undefined =
+        updatedMessage.attachments.first();
+
+      if (!image)
+        image = new AttachmentBuilder(
+          await getMessageScreenshot(updatedMessage),
+        );
+
+      if (!image)
+        return handleError(
+          `Failed to generate image for message: ${updatedMessage.content}`,
+        );
+
+      // -> Get hashtags
+      const hashtags = getHashTags(channel.category, channel.hashtagCount);
+
+      let tweet = formattedMessageTwitter;
+      let tweetStockTwits = formattedMessageStockTwits;
+
+      // -> Handle Image
+      const imageToPost = await discordAttachmentToBuffer(image);
+
+      // -> Truncate tweet if it's too long
+      if (tweet.length > 220) tweet = `${tweet.substring(0, 217)}...`;
+      if (tweetStockTwits.length > 220)
+        tweetStockTwits = `${tweetStockTwits.substring(0, 217)}...`;
+
+      const user = await Users.getOneById(updatedMessage.author.id);
+
+      const stocktwitsMsg = `${tweetStockTwits}${
+        user && user.twitstockUsername
+          ? `\nPosted by @${user.twitstockUsername}`
+          : `\nPosted by ${updatedMessage.author.username}`
+      }${channel.delay ? `\nDelay: ${channel.delay} min` : ''}`;
+
+      const twitterMsg = `${tweet}${
+        user && user.twitterUsername
+          ? `\nPosted by @${user.twitterUsername}`
+          : `\nPosted by ${updatedMessage.author.username}`
+      }${
+        channel.delay ? `\nDelay: ${channel.delay} min` : ''
+      }\n${hashtags}`;
+
+      // -> Log tweet & stocktwit
+      logToChannel(updatedMessage.client, 'Tweet', twitterMsg);
+      logToChannel(updatedMessage.client, 'Stocktwit', stocktwitsMsg);
+
       await postToStockTwits(stocktwitsMsg, imageToPost)
         .then(() => console.log(`Posted on stocktwits \n${stocktwitsMsg}`))
         .catch((err) =>
