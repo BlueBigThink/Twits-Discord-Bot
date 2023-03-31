@@ -4,12 +4,12 @@ import Users from '@services/users';
 import {
   discordAttachmentToBuffer,
   formatMessageContentToTweet,
-  getHashTags,
+  //getHashTags,
   getMessageScreenshot,
   handleError,
   logToChannel,
   postToStockTwits,
-  postToTwitter,
+  //postToTwitter,
 } from '@utils';
 import {
   Attachment,
@@ -97,16 +97,16 @@ module.exports = {
         );
 
       // -> Get hashtags
-      const hashtags = getHashTags(channel.category, channel.hashtagCount);
+      //const hashtags = getHashTags(channel.category, channel.hashtagCount);
 
-      let tweet = formattedMessageTwitter;
+     // let tweet = formattedMessageTwitter;
       let tweetStockTwits = formattedMessageStockTwits;
 
       // -> Handle Image
       const imageToPost = await discordAttachmentToBuffer(image);
 
       // -> Truncate tweet if it's too long
-      if (tweet.length > 220) tweet = `${tweet.substring(0, 217)}...`;
+     // if (tweet.length > 220) tweet = `${tweet.substring(0, 217)}...`;
       if (tweetStockTwits.length > 220)
         tweetStockTwits = `${tweetStockTwits.substring(0, 217)}...`;
 
@@ -118,16 +118,16 @@ module.exports = {
           : `\nPosted by ${updatedMessage.author.username}`
       }${channel.delay ? `\nDelay: ${channel.delay} min` : ''}`;
 
-      const twitterMsg = `${tweet}${
-        user && user.twitterUsername
-          ? `\nPosted by @${user.twitterUsername}`
-          : `\nPosted by ${updatedMessage.author.username}`
-      }${
-        channel.delay ? `\nDelay: ${channel.delay} min` : ''
-      }\n${hashtags}`;
+      // const twitterMsg = `${tweet}${
+      //   user && user.twitterUsername
+      //     ? `\nPosted by @${user.twitterUsername}`
+      //     : `\nPosted by ${updatedMessage.author.username}`
+      // }${
+      //   channel.delay ? `\nDelay: ${channel.delay} min` : ''
+      // }\n${hashtags}`;
 
       // -> Log tweet & stocktwit
-      logToChannel(updatedMessage.client, 'Tweet', twitterMsg);
+     // logToChannel(updatedMessage.client, 'Tweet', twitterMsg);
       logToChannel(updatedMessage.client, 'Stocktwit', stocktwitsMsg);
 
       await postToStockTwits(stocktwitsMsg, imageToPost)
@@ -136,11 +136,11 @@ module.exports = {
           handleError(`Error while posting on stocktwits\n${err}`),
         );
 
-      await postToTwitter(twitterMsg, imageToPost)
-        .then(() => console.log(`Posted on twitter \n${twitterMsg}`))
-        .catch((err) =>
-          handleError(`Error while posting on twitter\n${err}`),
-        );
+      // await postToTwitter(twitterMsg, imageToPost)
+      //   .then(() => console.log(`Posted on twitter \n${twitterMsg}`))
+      //   .catch((err) =>
+      //     handleError(`Error while posting on twitter\n${err}`),
+      //   );
     }, channel.delay + 0.5 * 60000);
   },
 };

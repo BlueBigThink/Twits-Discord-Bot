@@ -1,6 +1,7 @@
 // IMPORTS
 import { isProd } from '@keys';
-import { Client } from 'discord.js';
+import { postToStockTwits } from '@utils';
+import { Client, Guild } from 'discord.js';
 
 // READY
 module.exports = {
@@ -12,5 +13,7 @@ module.exports = {
         isProd ? 'Production' : 'Development'
       } environment)`,
     );
+    
   },
+  
 };

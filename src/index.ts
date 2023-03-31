@@ -82,6 +82,7 @@ client.on('interactionCreate', async (interaction) => {
 try {
   client.login(discordToken);
   console.log('Bot Status: Online');
+  console.log('startbot');
 } catch (e) {
   handleError(e);
 }
