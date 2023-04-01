@@ -276,10 +276,10 @@ export const logToChannel = async (
   title: string,
   message: Message | string,
 ) => {
-  const guild = await client.guilds.fetch('929564043033870356');
+  const guild = await client.guilds.fetch('1090879933410189372');
 
   const channel = (await guild.channels.fetch(
-    '1064272571958300732',
+    '1090879933410189375',
   )) as TextChannel;
 
   const content = message instanceof Message ? message.content : message;

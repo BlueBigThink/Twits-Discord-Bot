@@ -5,7 +5,7 @@ import {
   formatMessageContentToTweet,
   postToStockTwits,
   getMessageScreenshot,
-  postToTwitter,
+  //postToTwitter,
 } from '@utils';
 import {
   AttachmentBuilder,
@@ -55,7 +55,7 @@ module.exports = {
     if (tweet.length > 280) tweet = `${tweet.substring(0, 277)}...`;
 
     // -> Post to twitter
-    await postToTwitter(tweet, imageToPost);
+    //await postToTwitter(tweet, imageToPost);
 
     // -> Post to st
     await postToStockTwits(tweet, imageToPost);
